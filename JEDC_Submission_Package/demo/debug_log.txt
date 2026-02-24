@@ -1,0 +1,365 @@
+[2026-01-16 23:38:15] MEMORY MISS: Fetching Raw Data for US_SP100...
+[2026-01-16 23:38:15] Need update from 2000-01-01 to 2026-01-16
+[2026-01-16 23:38:15] Loading Base History from: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\US_SP100_fallback.csv
+[2026-01-16 23:38:16] Base History Loaded. Range: 1962-01-02 to 2026-01-12
+[2026-01-16 23:38:18] DEBUG PRE-CLEAN: Shape=(16115, 23), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:38:18] DEBUG PRE-CLEAN Range: 1962-01-02 00:00:00 to 2026-01-12 00:00:00
+[2026-01-16 23:38:18] DEBUG POST-CLEAN: Shape=(16115, 23)
+[2026-01-16 23:38:18] FETCH COMPLETE: Got 16115 rows for US_SP100
+[2026-01-16 23:38:19] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-16 23:38:19] SUCCESS: Loaded 3305 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-16 23:38:19] Macro TFI: Returning 3304 points (Cache total: 3305)
+[2026-01-16 23:38:20] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-16 23:38:20] SUCCESS: Loaded 242 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-16 23:38:33] MEMORY MISS: Fetching Raw Data for CN_A50...
+[2026-01-16 23:38:33] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:38:33] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:38:33] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:38:33] DEBUG CACHE-HIT POST-CLEAN: Shape=(8783, 4)
+[2026-01-16 23:38:33] FETCH COMPLETE: Got 8783 rows for CN_A50
+[2026-01-16 23:38:33] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:38:33] SUCCESS: Loaded 1748 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:38:34] Macro TFI: Returning 1748 points (Cache total: 1748)
+[2026-01-16 23:38:34] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:38:34] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:38:40] MEMORY HIT: Raw Data for US_SP100
+[2026-01-16 23:38:46] MEMORY HIT: Raw Data for CN_A50
+[2026-01-16 23:43:43] Need update from 2000-01-01 to 2026-01-16
+[2026-01-16 23:43:43] Loading Base History from: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\US_SP100_fallback.csv
+[2026-01-16 23:43:44] Base History Loaded. Range: 1962-01-02 to 2026-01-12
+[2026-01-16 23:43:46] DEBUG PRE-CLEAN: Shape=(16115, 23), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:43:46] DEBUG PRE-CLEAN Range: 1962-01-02 00:00:00 to 2026-01-12 00:00:00
+[2026-01-16 23:43:46] DEBUG POST-CLEAN: Shape=(16115, 23)
+[2026-01-16 23:43:47] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-16 23:43:47] SUCCESS: Loaded 3305 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-16 23:43:47] Macro TFI: Returning 3304 points (Cache total: 3305)
+[2026-01-16 23:43:51] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-16 23:43:51] SUCCESS: Loaded 242 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-16 23:44:07] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:44:07] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:44:07] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:44:07] DEBUG CACHE-HIT POST-CLEAN: Shape=(8783, 4)
+[2026-01-16 23:44:07] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:44:07] SUCCESS: Loaded 1748 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:44:07] Macro TFI: Returning 1748 points (Cache total: 1748)
+[2026-01-16 23:44:08] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:44:08] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:44:15] Need update from 2000-01-01 to 2026-01-16
+[2026-01-16 23:44:15] Loading Base History from: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\US_SP100_fallback.csv
+[2026-01-16 23:44:16] Base History Loaded. Range: 1962-01-02 to 2026-01-12
+[2026-01-16 23:44:18] DEBUG PRE-CLEAN: Shape=(16115, 23), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:44:18] DEBUG PRE-CLEAN Range: 1962-01-02 00:00:00 to 2026-01-12 00:00:00
+[2026-01-16 23:44:18] DEBUG POST-CLEAN: Shape=(16115, 23)
+[2026-01-16 23:44:25] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:44:25] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:44:25] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:44:25] DEBUG CACHE-HIT POST-CLEAN: Shape=(8783, 4)
+[2026-01-16 23:44:30] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:44:30] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:44:30] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:44:30] DEBUG CACHE-HIT POST-CLEAN: Shape=(8783, 4)
+[2026-01-16 23:44:39] Need update from 2000-01-01 to 2026-01-16
+[2026-01-16 23:44:39] Loading Base History from: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\US_SP100_fallback.csv
+[2026-01-16 23:44:40] Base History Loaded. Range: 1962-01-02 to 2026-01-12
+[2026-01-16 23:44:42] DEBUG PRE-CLEAN: Shape=(16115, 23), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:44:42] DEBUG PRE-CLEAN Range: 1962-01-02 00:00:00 to 2026-01-12 00:00:00
+[2026-01-16 23:44:42] DEBUG POST-CLEAN: Shape=(16115, 23)
+[2026-01-16 23:44:48] Need update from 2000-01-01 to 2026-01-16
+[2026-01-16 23:44:48] Loading Base History from: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\US_SP100_fallback.csv
+[2026-01-16 23:44:48] Base History Loaded. Range: 1962-01-02 to 2026-01-12
+[2026-01-16 23:44:50] DEBUG PRE-CLEAN: Shape=(16115, 23), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:44:50] DEBUG PRE-CLEAN Range: 1962-01-02 00:00:00 to 2026-01-12 00:00:00
+[2026-01-16 23:44:50] DEBUG POST-CLEAN: Shape=(16115, 23)
+[2026-01-16 23:45:26] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:45:26] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:45:26] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:45:26] DEBUG CACHE-HIT POST-CLEAN: Shape=(8783, 4)
+[2026-01-16 23:46:04] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:46:04] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:46:04] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:46:04] DEBUG CACHE-HIT POST-CLEAN: Shape=(8783, 4)
+[2026-01-16 23:50:07] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-16 23:50:08] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-16 23:50:08] Need update from 2026-01-16 to 2026-01-16
+[2026-01-16 23:50:10] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:50:10] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-16 23:50:10] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-16 23:50:10] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-16 23:50:10] SUCCESS: Loaded 3305 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-16 23:51:48] Macro TFI: Returning 2701 points (Cache total: 4606)
+[2026-01-16 23:51:51] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-16 23:51:51] SUCCESS: Loaded 242 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-16 23:52:08] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:52:08] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-16 23:52:08] Need update from 2026-01-16 to 2026-01-16
+[2026-01-16 23:52:10] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:52:10] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-16 23:52:10] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-16 23:52:11] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:52:11] SUCCESS: Loaded 1748 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:52:38] Macro TFI: Returning 2565 points (Cache total: 3026)
+[2026-01-16 23:52:39] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:52:39] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:53:10] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-16 23:53:11] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-16 23:53:11] Need update from 2026-01-16 to 2026-01-16
+[2026-01-16 23:53:13] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:53:13] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-16 23:53:13] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-16 23:53:22] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-16 23:53:22] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-16 23:53:22] Warehouse up-to-date. No fetch needed.
+[2026-01-16 23:53:22] DEBUG CACHE-HIT POST-CLEAN: Shape=(6435, 20)
+[2026-01-16 23:53:22] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:53:22] SUCCESS: Loaded 3026 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-16 23:53:22] Macro TFI: Returning 2565 points (Cache total: 3026)
+[2026-01-16 23:53:23] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:53:23] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-16 23:55:52] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-16 23:55:52] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-16 23:55:52] Need update from 2026-01-16 to 2026-01-16
+[2026-01-16 23:55:58] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:55:58] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-16 23:55:58] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-16 23:56:02] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-16 23:56:03] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-16 23:56:03] Need update from 2026-01-16 to 2026-01-16
+[2026-01-16 23:56:06] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:56:06] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-16 23:56:06] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-16 23:56:17] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-16 23:56:18] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-16 23:56:18] Need update from 2026-01-16 to 2026-01-16
+[2026-01-16 23:56:23] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-16 23:56:23] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-16 23:56:23] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:02:09] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:02:09] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:02:09] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:02:10] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:02:10] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:02:11] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:02:11] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:02:11] SUCCESS: Loaded 4606 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:02:11] Macro TFI: Returning 2701 points (Cache total: 4606)
+[2026-01-17 00:02:16] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:02:16] SUCCESS: Loaded 245 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:02:49] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-17 00:02:49] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-17 00:02:49] Need update from 2026-01-17 to 2026-01-17
+[2026-01-17 00:02:50] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:02:50] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-17 00:02:50] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-17 00:02:50] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-17 00:02:50] SUCCESS: Loaded 3026 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-17 00:02:50] Macro TFI: Returning 2565 points (Cache total: 3026)
+[2026-01-17 00:02:51] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-17 00:02:51] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-17 00:06:16] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:06:17] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:06:17] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:06:19] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:06:19] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:06:19] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:06:19] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:06:19] SUCCESS: Loaded 4606 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:06:19] Macro TFI: Returning 2701 points (Cache total: 4606)
+[2026-01-17 00:06:24] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:06:24] SUCCESS: Loaded 245 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:07:20] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:07:20] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:07:20] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:07:22] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:07:22] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:07:22] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:07:22] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:07:22] SUCCESS: Loaded 4606 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:07:22] Macro TFI: Returning 2701 points (Cache total: 4606)
+[2026-01-17 00:07:25] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:07:25] SUCCESS: Loaded 245 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:08:55] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:08:55] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:08:55] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:08:57] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:08:57] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:08:57] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:09:24] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:09:24] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:09:24] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:09:26] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:09:26] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:09:26] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:10:44] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:10:45] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:10:45] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:10:47] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:10:47] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:10:47] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:10:53] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:10:53] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:10:53] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:10:55] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:10:55] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:10:55] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:13:25] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:13:25] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:13:25] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:13:27] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:13:27] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:13:27] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:13:28] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:13:28] SUCCESS: Loaded 4606 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-17 00:13:28] Macro TFI: Returning 2701 points (Cache total: 4606)
+[2026-01-17 00:13:30] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:13:30] SUCCESS: Loaded 245 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:14:37] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:14:37] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:14:37] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:14:38] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:14:38] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:14:38] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:20:22] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:20:22] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:20:22] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:20:24] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:20:24] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:20:24] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:20:25] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:20:25] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:20:25] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:20:26] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:20:26] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:20:26] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:20:57] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:20:57] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:20:57] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:20:58] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:20:58] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:20:58] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:24:14] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:24:14] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:24:14] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:24:16] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:24:16] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:24:16] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:25:21] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:25:21] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:25:21] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:25:22] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:25:22] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:25:22] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:25:41] Macro TFI: Returning 1301 points (Cache total: 1301)
+[2026-01-17 00:32:49] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-17 00:32:49] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-17 00:32:49] Need update from 2026-01-17 to 2026-01-17
+[2026-01-17 00:32:49] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:32:49] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-17 00:32:49] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-17 00:32:50] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-17 00:32:50] SUCCESS: Loaded 3026 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-17 00:32:50] Macro TFI: Returning 2565 points (Cache total: 3026)
+[2026-01-17 00:32:50] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-17 00:32:50] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-17 00:34:00] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:34:00] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:34:00] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:34:01] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:34:01] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:34:01] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:35:55] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-17 00:35:55] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-17 00:35:55] Need update from 2026-01-17 to 2026-01-17
+[2026-01-17 00:35:55] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:35:55] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-17 00:35:55] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-17 00:36:39] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:36:39] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:36:39] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:36:40] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:36:40] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:36:40] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:37:22] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-17 00:37:22] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-17 00:37:22] Need update from 2026-01-17 to 2026-01-17
+[2026-01-17 00:37:23] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:37:23] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-17 00:37:23] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-17 00:48:57] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:48:57] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:48:57] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:48:58] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:48:58] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:48:58] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:49:29] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:49:29] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:49:29] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:49:30] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:49:30] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:49:30] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:50:43] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:50:43] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:50:43] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:50:44] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:50:44] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:50:44] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:50:44] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:50:44] SUCCESS: Loaded 245 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 00:51:40] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:51:40] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:51:40] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:51:41] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:51:41] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:51:41] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:51:50] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:51:50] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:51:50] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:51:51] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:51:51] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:51:51] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:52:05] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 00:52:05] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 00:52:05] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 00:52:06] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:52:06] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 00:52:06] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 00:52:07] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-17 00:52:07] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-17 00:52:07] Need update from 2026-01-17 to 2026-01-17
+[2026-01-17 00:52:07] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 00:52:07] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-17 00:52:07] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-17 00:52:20] Macro TFI: Returning 1278 points (Cache total: 1278)
+[2026-01-17 13:07:04] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 13:07:05] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 13:07:05] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 13:07:06] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 13:07:06] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 13:07:06] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 13:07:06] Attempting to read CSV: TFI_US_SP100_W45_K5.csv
+[2026-01-17 13:07:06] SUCCESS: Loaded 4606 rows from TFI_US_SP100_W45_K5.csv
+[2026-01-17 13:07:06] Macro TFI: Returning 2701 points (Cache total: 4606)
+[2026-01-17 13:07:10] Attempting to read CSV: TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 13:07:10] SUCCESS: Loaded 366 rows from TFI_Daily_US_SP100_W45_K5.csv
+[2026-01-17 13:10:43] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 13:10:43] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 13:10:43] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 13:10:45] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 13:10:45] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 13:10:45] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 13:11:12] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\US_SP100.csv
+[2026-01-17 13:11:12] Local warehouse loaded. Last date: 2026-01-15
+[2026-01-17 13:11:12] Need update from 2026-01-16 to 2026-01-17
+[2026-01-17 13:11:15] DEBUG PRE-CLEAN: Shape=(6549, 50), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 13:11:15] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-15 00:00:00
+[2026-01-17 13:11:15] DEBUG POST-CLEAN: Shape=(6549, 50)
+[2026-01-17 13:11:59] Found local warehouse: C:\Users\29478.000\Desktop\系统科学金融理论\JEDC_Submission_Package\demo\data\warehouse\CN_A50.csv
+[2026-01-17 13:11:59] Local warehouse loaded. Last date: 2026-01-16
+[2026-01-17 13:11:59] Need update from 2026-01-17 to 2026-01-17
+[2026-01-17 13:11:59] DEBUG PRE-CLEAN: Shape=(6435, 20), IndexType=<class 'pandas.core.indexes.datetimes.DatetimeIndex'>
+[2026-01-17 13:11:59] DEBUG PRE-CLEAN Range: 2000-01-03 00:00:00 to 2026-01-16 00:00:00
+[2026-01-17 13:11:59] DEBUG POST-CLEAN: Shape=(6435, 20)
+[2026-01-17 13:12:00] Attempting to read CSV: TFI_CN_A50_W45_K5.csv
+[2026-01-17 13:12:00] SUCCESS: Loaded 3026 rows from TFI_CN_A50_W45_K5.csv
+[2026-01-17 13:12:00] Macro TFI: Returning 2565 points (Cache total: 3026)
+[2026-01-17 13:12:00] Attempting to read CSV: TFI_Daily_CN_A50_W45_K5.csv
+[2026-01-17 13:12:00] SUCCESS: Loaded 121 rows from TFI_Daily_CN_A50_W45_K5.csv

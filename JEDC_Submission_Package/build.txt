@@ -1,0 +1,3 @@
+ST_OFFLINE_MODE=true
+streamlit run JEDC_Submission_Package/demo/app.py --server.port 8501 --server.enableCORS false --server.enableXsrfProtection false --server.headless true
+cd JEDC_Submission_Package/manuscript; pdflatex Paper_Submission; pdflatex Paper_Submission

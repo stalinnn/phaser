@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专利附图 2：端侧设备动态缓存管理时序图</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: 'SimHei', 'Microsoft YaHei', sans-serif; background-color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .mermaid { background-color: white; padding: 20px; border-radius: 10px; }
+        h2 { position: absolute; top: 20px; text-align: center; width: 100%; color: #333; }
+    </style>
+</head>
+<body>
+    <h2>图 2：端侧设备基于熵判决的动态缓存管理时序图</h2>
+    <div class="mermaid">
+    sequenceDiagram
+        autonumber
+        participant User as 用户输入
+        participant RNN as 惯性处理单元 (RNN)
+        participant Gate as 门控判决单元
+        participant NPU as 几何处理单元 (Attention)
+        participant Flash as 冷存储 (Flash/SSD)
+
+        Note over RNN: 始终常驻内存 (低功耗运行)
+        
+        User->>RNN: 输入数据帧 1 (简单语义)
+        RNN->>Gate: 计算信息熵
+        Gate-->>RNN: 熵低 (gt=0.01), 保持惯性
+        RNN->>User: 快速输出 (仅 RNN)
+        
+        User->>RNN: 输入数据帧 2 (简单语义)
+        RNN->>Gate: 计算信息熵
+        Gate-->>RNN: 熵低 (gt=0.02), 保持惯性
+        RNN->>User: 快速输出 (仅 RNN)
+        
+        rect rgb(255, 240, 240)
+        Note right of User: 检测到复杂逻辑/长程依赖
+        User->>RNN: 输入数据帧 3 (复杂/回指)
+        RNN->>Gate: 计算信息熵
+        Gate->>NPU: 熵高 (gt=0.9)! 唤醒几何单元
+        NPU->>Flash: DMA 请求: 加载历史 KV Cache
+        Flash-->>NPU: 数据回送 (DMA)
+        NPU->>NPU: 执行全局注意力计算 (O(N^2))
+        NPU->>User: 精确输出 (几何修正后)
+        end
+        
+        Note over NPU: 计算完成，立即释放显存
+    </div>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            sequence: {
+                showSequenceNumbers: true,
+                actorMargin: 100
+            }
+        });
+    </script>
+</body>
+</html>

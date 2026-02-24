@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patent Figure 2: Edge Device Sequence Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .mermaid { background-color: white; padding: 20px; border-radius: 10px; }
+        h2 { position: absolute; top: 20px; text-align: center; width: 100%; color: #333; }
+    </style>
+</head>
+<body>
+    <h2>Fig 2: Dynamic Cache Management on Edge Devices</h2>
+    <div class="mermaid">
+    sequenceDiagram
+        autonumber
+        participant User as User Input
+        participant RNN as Inertial Unit (RNN)
+        participant Gate as Gating Unit
+        participant NPU as Geometric Unit (NPU)
+        participant Flash as Cold Storage (Flash)
+
+        Note over RNN: Resident in Memory (Low Power)
+        
+        User->>RNN: Input Token 1 (Simple)
+        RNN->>Gate: Calculate Entropy
+        Gate-->>RNN: Low Entropy (gt=0.01)
+        RNN->>User: Fast Output (RNN Only)
+        
+        User->>RNN: Input Token 2 (Simple)
+        RNN->>Gate: Calculate Entropy
+        Gate-->>RNN: Low Entropy (gt=0.02)
+        RNN->>User: Fast Output (RNN Only)
+        
+        rect rgb(255, 240, 240)
+        Note right of User: Complex Logic Detected
+        User->>RNN: Input Token 3 (Complex/Recall)
+        RNN->>Gate: Calculate Entropy
+        Gate->>NPU: High Entropy (gt=0.9)! Wake up NPU
+        NPU->>Flash: DMA Request: Load History KV Cache
+        Flash-->>NPU: Data Transfer
+        NPU->>NPU: Execute Attention (O(N^2))
+        NPU->>User: Precise Output (Geometric Correction)
+        end
+        
+        Note over NPU: Task Done, Release Memory Immediately
+    </div>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            sequence: {
+                showSequenceNumbers: true,
+                actorMargin: 100
+            }
+        });
+    </script>
+</body>
+</html>

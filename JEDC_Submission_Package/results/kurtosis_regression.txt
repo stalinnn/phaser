@@ -1,0 +1,26 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:               Fwd_Kurt   R-squared:                       0.017
+Model:                            OLS   Adj. R-squared:                  0.015
+Method:                 Least Squares   F-statistic:                     9.978
+Date:                Mon, 12 Jan 2026   Prob (F-statistic):           5.04e-05
+Time:                        22:26:00   Log-Likelihood:                -2058.4
+No. Observations:                1190   AIC:                             4123.
+Df Residuals:                    1187   BIC:                             4138.
+Df Model:                           2                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.4881      0.154      3.160      0.002       0.185       0.791
+VIX           -0.0192      0.005     -4.090      0.000      -0.028      -0.010
+Parisi         1.0817      0.446      2.424      0.016       0.206       1.957
+==============================================================================
+Omnibus:                      575.198   Durbin-Watson:                   0.776
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             3971.130
+Skew:                           2.136   Prob(JB):                         0.00
+Kurtosis:                      10.864   Cond. No.                         254.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.

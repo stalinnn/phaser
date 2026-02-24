@@ -1,0 +1,3 @@
+Parisi vs PCA Orthogonality Check
+Correlation: 0.3483
+Interpretation: Low correlation (<0.5) confirms Parisi captures non-linear structure distinct from PCA.
