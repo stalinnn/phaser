@@ -45,7 +45,7 @@ $$ h_y = \sigma \left( \sum_{x \in \mathcal{N}(y)} W \cdot (U_{y \leftarrow x} h
 $$ U_t(h_t) = I + \alpha_t A_t B_t^T $$
 *   **输入**：隐状态 $h_t \in \mathbb{R}^d$。
 *   **生成器**：Hypernetwork 生成 $A_t, B_t \in \mathbb{R}^{d \times r}$ ($r \ll d$)。
-*   **复杂度**：从 $O(d^2)$ 降低至 $O(rd)$，在 Llama-8B 上仅增加 <1% 的计算量。
+*   **复杂度**：从 $O(d^2)$ 降低至 $O(rd)$，在 Llama-8B 上仅增加 <2% 的计算量。
 
 ### 3.2 熵驱动门控 (Entropy-Driven Gating)
 基于热力学自由能 $F = U - TS$，连接器仅在系统熵增（不确定性大）时开启：
