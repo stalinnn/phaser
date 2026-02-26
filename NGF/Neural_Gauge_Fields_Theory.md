@@ -34,6 +34,11 @@ NGF 认为，空间是弯曲的，基底变换矩阵 $M$ 不是常数，而是**
 定义**联络算子 (Connection)** $U_{A \leftarrow B}$ 为沿路径 $\gamma$ 的积分：
 $$ U_{A \leftarrow B}[\gamma] = \mathcal{P} \exp \left( \int_\gamma \mathbf{A}(x) \cdot dx \right) $$
 
+> **注：什么是 $\mathcal{P} \exp$？**
+> 这代表**路径有序指数积分 (Path-ordered exponential)**。
+> *   **直观理解**：在矩阵世界里（如三维旋转），乘法是**不可交换**的（先绕 X 轴转 90 度再绕 Y 轴转，与反过来做的结果完全不同）。
+> *   **物理含义**：当我们沿路径移动时，必须严格按照“走路的先后顺序”，把沿途遇到的无数个无穷小旋转矩阵 $(I + \mathbf{A}dx)$ 依次乘起来。如果不加 $\mathcal{P}$，直接积分就会导致顺序混乱，物理意义全失。
+
 *   **路径依赖性**：如果你沿着另一条路径 $\gamma'$ 从 $B$ 回到 $A$，你得到的矩阵 $U'$ 可能与 $U$ 不同（$U \neq U'$）。这就是**非阿贝尔规范场**的特征，也是识别拓扑结构（如莫比乌斯环）的关键。
 *   **计算公式**：
     $$ x_{total} = x_A + U_{A \leftarrow B}[\gamma] \cdot x_B $$
@@ -47,9 +52,15 @@ $$ f'(x) = \lim_{\Delta x \to 0} \frac{f(x + \Delta x) - f(x)}{\Delta x} $$
 但在弯曲空间中，由于 $f(x)$ 和 $f(x+\Delta x)$ 处于不同的基底中，直接相减是无意义的。我们需要先将 $f(x)$ **平行移动 (Parallel Transport)** 到 $x+\Delta x$ 处，记为 $\tilde{f}(x)$，然后再做比较。
 
 设平行移动算子为矩阵 $U(x, x+\Delta x)$。对于**无穷小位移** $\Delta x$，我们可以对 $U$ 进行**泰勒展开 (Taylor Expansion)**：
+$$ U(x, x+\Delta x) \approx U(x, x) + \frac{\partial U}{\partial x} \Delta x $$
+由于 $U(x, x)$ 表示“从自己移动到自己”，这显然是一个恒等变换（什么都没变），所以 $U(x, x) = I$。
+我们可以将导数项记为 $\mathbf{A}(x)$（为了物理习惯，通常带个虚数单位 $i$，这里为了简化暂略）：
 $$ U(x, x+\Delta x) \approx I + \mathbf{A}(x) \Delta x + O(\Delta x^2) $$
+
 *   $I$：单位矩阵（表示如果没有弯曲，向量保持不变）。
-*   $\mathbf{A}(x)$：一阶修正项矩阵。在物理上，这就是**规范势 (Gauge Potential)**；在几何上，它描述了空间的**局部曲率/扭曲率**。
+*   $\mathbf{A}(x)$：一阶修正项矩阵。
+    *   **在物理上**：这就是**规范势 (Gauge Potential)**，比如电磁场中的向量势。
+    *   **在几何上**：它描述了空间的**局部曲率/扭曲率**。如果空间是平直的，$\mathbf{A}(x)=0$，那么平行移动矩阵就退化为 $I$（什么都不做）。$\mathbf{A}(x)$ 越大约复杂，说明空间扭曲越剧烈。
 
 现在，我们定义**协变导数 (Covariant Derivative)**：
 $$ Df(x) = \lim_{\Delta x \to 0} \frac{f(x+\Delta x) - U(x, x+\Delta x)f(x)}{\Delta x} $$
