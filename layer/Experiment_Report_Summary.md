@@ -75,17 +75,17 @@
     *   Jamba 采用均匀混合（每 8 层）。但我们的 SVD 数据显示，Mamba 在浅层（Layer 0-7）已经达到信息密度峰值，且远优于 Transformer。**在浅层插入 Attention 是算力的纯粹浪费。**
     *   Probing 数据显示 Mamba 的衰退主要发生在需要极长 Context 的深层。Jamba 在深层的 Attention 密度可能不足以弥补那 20% 的精度损失。
 2.  **流形冲突 (Manifold Conflict)**:
-    *   CKA 显示 $R^2 \approx 0.5$，说明两者微观流形不对齐。串行结构迫使特征在“平滑流形”（Mamba）和“尖峰流形”（Attention）之间反复跳跃。
-    *   这解释了为何 Jamba 类模型**训练极其不稳定**——模型把大量容量浪费在了适配不同流形的分布上，而非学习语义本身。
+    *   **球与锥的战争**：CKA 显示 $R^2 \approx 0.5$。Mamba 构建的是**各向同性球体**（Isotropic, Anisotropy $\approx 0.15$），而 Transformer 构建的是**各向异性锥体**（Anisotropic, Anisotropy $\approx 0.30$）。
+    *   串行结构迫使特征在“平滑流形”（Mamba）和“尖峰流形”（Attention）之间反复跳跃，破坏了 Mamba 的惯性流（Inertial Flow），导致了严重的几何摩擦。
 
 ### 3.2 理论升华：亥姆霍兹自由能视角 (Helmholtz Perspective)
 我们将混合架构的设计重构为**自由能最小化**问题：$F = U - TS$。
 
-*   **Mamba (熵项 $S$)**: 负责最大化表征的熵（Entropy）。SVD 结果证明 Mamba 确实具有更高的有效秩和更低的各向异性，它构建了一个**高容量、高多样性的基础流形**。
-*   **Transformer (内能项 $U$)**: 负责最小化预测误差（Energy）。Probing 结果证明 Attention 能解决长程依赖，消除不确定性。
-*   **Gate (温度 $T$)**: 动态调节两者平衡。
+*   **Mamba (熵项 $S$)**: **高熵基态 (High Entropy Base)**。SVD 结果证明 Mamba 确实具有更高的有效秩和更低的各向异性，它构建了一个**均匀、高容量的“热浴”**，保留了所有可能性的叠加态。
+*   **Transformer (内能项 $U$)**: **负熵流 (Negentropy Flux)**。Attention 机制是系统的“麦克斯韦妖”，负责从热浴中提取精确信息，最小化预测误差（即降低内能 $U$）。
+*   **Gate (温度 $T$)**: **相变控制器**。当 Mamba 的预测不确定性（局部温度）升高时，Gate 打开，诱发相变，引入 Attention 进行“降温”。
 
-**结论**: 理想的架构不应是串行的（互相干扰），而应是**并行的正交互补**。Mamba 提供高熵先验，Transformer 提供低能修正。
+**结论**: 理想的架构不应是串行的（互相干扰），而应是**并行的热力学耦合**。Mamba 提供高熵背景，Transformer 提供低熵修正。
 
 ---
 
