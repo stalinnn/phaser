@@ -225,10 +225,12 @@ $$ U_{y \leftarrow x} = \mathcal{P} \exp \left( \int_x^y \mathbf{A}_\mu dx^\mu \
 **NGF 神经网络**：
 $$ h_y = \sigma \left( \sum_{x \in \mathcal{N}(y)} W \cdot \underbrace{U_{y \leftarrow x} h_x}_{\text{几何校正}} \right) $$
 
-### 5.3 低秩近似的物理基础 (Physical Basis of Low-Rank Approximation)
-在工程实现中，我们采用了低秩近似 $U \approx I + \alpha A B^T$ ($rank \ll d$)。这一设计并非仅仅为了省显存，而是有着深刻的物理原因：
-*   **内在维度 (Intrinsic Dimension)**：尽管大模型的特征空间高达 4096 维，但根据流形假设 (Manifold Hypothesis)，有效的语义变化往往只发生在极少数的几个主成分方向上（如“单复数变化”、“时态旋转”）。
-*   **稀疏规范势**：物理世界中的力场（如电磁场）往往是由少数几个源头激发的。同理，神经规范场 $\mathbf{A}_\mu$ 在高维空间中必然是稀疏或低秩的。
+### 5.3 在李代数上的低秩近似 (Low-Rank Approximation on Lie Algebra)
+在工程实现中，为了解决全秩规范场带来的显存爆炸问题，同时绝对保证物理法则（李群对称性）不被破坏，我们采用了在李代数上进行低秩投影的方法：
+$$ \mathbf{A}_\mu = \mathbf{A}_{base} + \frac{\alpha}{2} (A B^T - B A^T) $$
+其中 $A, B \in \mathbb{R}^{D \times r}$ ($r \ll D$)。
+*   **物理必然性**：我们不对结果（李群）做低秩（如 $U \approx I + AB^T$，这会破坏正交性导致刚体变形），而是对产生结果的扭力（李代数 $\mathfrak{g}$）做低秩扰动。通过强制施加 $(AB^T - BA^T)$ 的反对称投影，我们保证了指数映射后的算子 $U = \exp(\mathbf{A}_\mu)$ 100% 属于合法的旋转李群。
+*   **内在维度 (Intrinsic Dimension)**：根据流形假设，有效的语义扭曲往往只发生在极少数的几个主成分方向上。低秩投影强迫网络只学习那些最重要的“几何物理生成元”，在省下 99% 计算量的同时，完美守卫了系统的时空物理常识。
 
 ---
 
