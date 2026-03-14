@@ -1,5 +1,5 @@
 import torch
-from holo_math import poincare_distance, exp_map_0
+from holo_math import PoincareMath
 
 def main():
     print("==================================================")
@@ -7,6 +7,8 @@ def main():
     print("Testing Poincaré Distance vs Euclidean Distance")
     print("==================================================\n")
 
+    math_engine = PoincareMath(c=1.0)
+    
     # Define a simple tree structure in Euclidean space
     # Root represents the most abstract concept
     root = torch.tensor([0.0, 0.0])
@@ -37,17 +39,17 @@ def main():
     print("even though they belong to completely different branches.\n")
     
     # 2. Map vectors to Poincaré Ball
-    root_poin = exp_map_0(root)
-    node_A1_poin = exp_map_0(node_A1)
-    node_A2_poin = exp_map_0(node_A2)
-    node_B1_poin = exp_map_0(node_B1)
-    node_B2_poin = exp_map_0(node_B2)
+    root_poin = math_engine.exp_map0(root)
+    node_A1_poin = math_engine.exp_map0(node_A1)
+    node_A2_poin = math_engine.exp_map0(node_A2)
+    node_B1_poin = math_engine.exp_map0(node_B1)
+    node_B2_poin = math_engine.exp_map0(node_B2)
     
     # 3. Calculate Poincaré Distances
-    poin_A1_B1 = poincare_distance(node_A1_poin, node_B1_poin).item()
-    poin_A1_root = poincare_distance(node_A1_poin, root_poin).item()
-    poin_B1_root = poincare_distance(node_B1_poin, root_poin).item()
-    poin_A1_A2 = poincare_distance(node_A1_poin, node_A2_poin).item()
+    poin_A1_B1 = math_engine.dist(node_A1_poin, node_B1_poin).item()
+    poin_A1_root = math_engine.dist(node_A1_poin, root_poin).item()
+    poin_B1_root = math_engine.dist(node_B1_poin, root_poin).item()
+    poin_A1_A2 = math_engine.dist(node_A1_poin, node_A2_poin).item()
     
     print("--- 2. Poincaré Distances (The Holographic Truth) ---")
     print(f"Dist(A1, B1) [Across different branches]: {poin_A1_B1:.4f}")
@@ -71,9 +73,9 @@ def main():
         print("Hmm, the approximation is not as strong as expected.")
         
     print("\n--- 4. Extreme Leaf Nodes ---")
-    poin_A2_B2 = poincare_distance(node_A2_poin, node_B2_poin).item()
-    poin_A2_root = poincare_distance(node_A2_poin, root_poin).item()
-    poin_B2_root = poincare_distance(node_B2_poin, root_poin).item()
+    poin_A2_B2 = math_engine.dist(node_A2_poin, node_B2_poin).item()
+    poin_A2_root = math_engine.dist(node_A2_poin, root_poin).item()
+    poin_B2_root = math_engine.dist(node_B2_poin, root_poin).item()
     tree_path_dist_leaf = poin_A2_root + poin_B2_root
     print(f"Dist(A2, B2) [Deep leaf nodes, different branches]: {poin_A2_B2:.4f}")
     print(f"Path distance via Root (A2 -> Root -> B2)       : {tree_path_dist_leaf:.4f}")

@@ -1,0 +1,3 @@
+=== 运行公开基准测试 (HotpotQA Multi-hop Benchmark) on cuda ===
+
+Loading HotpotQA validation set...

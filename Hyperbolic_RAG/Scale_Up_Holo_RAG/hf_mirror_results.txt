@@ -1,0 +1,19 @@
+
+[Running Synthetic Multi-hop Benchmark as Fallback]
+Loading backbone model: BAAI/bge-small-zh-v1.5
+>>> 成功加载规模化微调的全息投影矩阵 (Scale-Up Holo Projection Loaded!)
+Encoding knowledge base...
+
+==================================================
+Benchmark Results (Finetuned Synthetic Dataset)
+==================================================
+Metrics over 5 complex multi-hop queries:
+
+[Baseline: Flat Euclidean RAG (Cosine)]
+MRR       : 0.1733
+Recall@2  : 0.0000
+
+[Ours: Holo-RAG (Poincaré Geodesic)]
+MRR       : 0.4400
+Recall@2  : 0.2000
+==================================================
