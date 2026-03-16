@@ -37,6 +37,7 @@ data/
 data_cache/
 models/
 model_downloads/models/
+Hyperbolic_RAG/datasets/
 *.bin
 *.hdf5
 *.h5

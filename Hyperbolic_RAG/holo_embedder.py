@@ -9,7 +9,7 @@ class HyperbolicEmbedder(nn.Module):
     作用：将传统的预训练欧氏空间 Embedding 模型（如 BERT / BGE）升级为双曲模型。
     原理：冻结底层 Transformer 权重，在池化层后接入可学习的全息投影层，将特征映射进庞加莱球。
     """
-    def __init__(self, model_name="BAAI/bge-small-zh-v1.5", c=1.0):
+    def __init__(self, model_name="C:/Users/29478.000/Desktop/系统科学金融理论/model_downloads/models/bge-small-en-v1.5", c=1.0):
         super().__init__()
         # 1. 加载骨干网络
         print(f"Loading backbone model: {model_name}")

@@ -67,9 +67,16 @@ def run_hotpotqa_benchmark():
     
     # 3. Load Models
     print("\nLoading Base Embedding Model (BAAI/bge-small-en-v1.5)...")
-    embedder = HyperbolicEmbedder("BAAI/bge-small-en-v1.5").to(device)
+    embedder = HyperbolicEmbedder("C:/Users/29478.000/Desktop/系统科学金融理论/model_downloads/models/bge-small-en-v1.5").to(device)
     
-    print(">>> Note: Using Zero-Shot Hyperbolic Projection (Untrained geometry).")
+    print(">>> Note: Using Fine-Tuned Hyperbolic Projection (scale_holo_projection_hotpotqa.pt).")
+    try:
+        # 尝试加载刚刚微调好的权重
+        state_dict = torch.load("scale_holo_projection_hotpotqa.pt", map_location=device)
+        embedder.projection.load_state_dict(state_dict)
+        print(">>> Successfully loaded fine-tuned projection weights!")
+    except FileNotFoundError:
+        print(">>> WARNING: scale_holo_projection_hotpotqa.pt not found. Using untrained weights.")
     embedder.eval()
     
     db_flat = FlatVectorDB(device=device)

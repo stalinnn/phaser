@@ -62,14 +62,16 @@ def train_batched_holo_embedder():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"=== 启动全息嵌入规模化微调 (Scale-Up Hyperbolic Fine-Tuning) on {device} ===")
     
-    embedder = HyperbolicEmbedder("BAAI/bge-small-zh-v1.5").to(device)
+    # We use english model for HotpotQA
+    embedder = HyperbolicEmbedder("C:/Users/29478.000/Desktop/系统科学金融理论/model_downloads/models/bge-small-en-v1.5").to(device)
     optimizer = optim.Adam(embedder.projection.parameters(), lr=1e-3)
     
-    dataset = HierarchicalDataset("hierarchical_dataset.json")
+    # Use the generated HotpotQA training pairs
+    dataset = HierarchicalDataset("hotpotqa_train_pairs.json")
     # Small batch size due to memory constraints of keeping Transformer on GPU
     dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
     
-    epochs = 300 # Increased epochs and added LR scheduling
+    epochs = 30 # For a larger dataset like HotpotQA, fewer epochs are needed
     
     print(f"Dataset size: {len(dataset)}, Batches per epoch: {len(dataloader)}")
     print("[开始训练...]")
@@ -78,7 +80,7 @@ def train_batched_holo_embedder():
         embedder.train()
         total_loss = 0.0
         
-        for batch_parents, batch_children, batch_labels in dataloader:
+        for batch_idx, (batch_parents, batch_children, batch_labels) in enumerate(dataloader):
             optimizer.zero_grad()
             
             batch_labels = batch_labels.to(device)
@@ -97,24 +99,26 @@ def train_batched_holo_embedder():
             
             total_loss += loss.item()
             
+            if batch_idx % 500 == 0:
+                print(f"  Batch {batch_idx}/{len(dataloader)} | Loss: {loss.item():.4f}")
+            
         avg_loss = total_loss / len(dataloader)
         
         # Anneal the learning rate slightly
-        if epoch == 100:
+        if epoch == 10:
             for param_group in optimizer.param_groups:
                 param_group['lr'] = 5e-4
-        if epoch == 200:
+        if epoch == 20:
             for param_group in optimizer.param_groups:
                 param_group['lr'] = 1e-4
 
-        if epoch % 20 == 0 or epoch == epochs - 1:
-            with torch.no_grad():
-                r_u = torch.norm(u[0]).item()
-                r_v = torch.norm(v[0]).item()
-            print(f"Epoch {epoch:03d} | Avg Loss: {avg_loss:.4f} | R_父(sample): {r_u:.3f}, R_子(sample): {r_v:.3f}")
+        with torch.no_grad():
+            r_u = torch.norm(u[0]).item()
+            r_v = torch.norm(v[0]).item()
+        print(f"Epoch {epoch:03d} | Avg Loss: {avg_loss:.4f} | R_父(sample): {r_u:.3f}, R_子(sample): {r_v:.3f}")
 
     # Save to the Scale-Up directory
-    save_path = "scale_holo_projection.pt"
+    save_path = "scale_holo_projection_hotpotqa.pt"
     torch.save(embedder.projection.state_dict(), save_path)
     print(f"\n>>> 规模化微调完成！已保存至 {save_path}")
 
