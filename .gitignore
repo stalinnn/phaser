@@ -36,6 +36,7 @@ htmlcov/
 data/
 data_cache/
 models/
+model_downloads/models/
 *.bin
 *.hdf5
 *.h5
