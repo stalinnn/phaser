@@ -39,10 +39,13 @@ class BatchedHoloVectorDB:
         num_vectors = self.vectors.size(0)
         all_distances = []
         
+        import geoopt
+        manifold = geoopt.PoincareBall(c=self.c)
+        
         # Batched distance computation
         for i in range(0, num_vectors, self.batch_size):
             batch_vectors = self.vectors[i:i+self.batch_size]
-            batch_dists = self.holo_math.dist(query_embedding, batch_vectors).squeeze()
+            batch_dists = manifold.dist(query_embedding, batch_vectors).squeeze()
             if batch_dists.dim() == 0:
                 batch_dists = batch_dists.unsqueeze(0)
             all_distances.append(batch_dists)

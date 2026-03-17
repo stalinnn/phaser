@@ -25,53 +25,61 @@ class HierarchicalDataset(Dataset):
 
 def poincare_margin_loss(u, v, label, margin=2.0, c=1.0):
     """
-    Robust Poincare Margin Loss with dynamic clamping.
+    Robust Poincare Margin Loss using geoopt.
     """
-    def dist_sq(x, y):
-        diff_sq = torch.sum((x - y)**2, dim=-1)
-        norm_x_sq = torch.sum(x**2, dim=-1)
-        norm_y_sq = torch.sum(y**2, dim=-1)
-        
-        norm_x_sq = torch.clamp(norm_x_sq, max=1.0 - 1e-5)
-        norm_y_sq = torch.clamp(norm_y_sq, max=1.0 - 1e-5)
-        
-        arg = 1 + 2 * diff_sq / ((1 - norm_x_sq) * (1 - norm_y_sq))
-        arg = torch.clamp(arg, min=1.0 + 1e-5)
-        
-        d = torch.acosh(arg)
-        return d**2
-
-    d_uv = dist_sq(u, v)
+    import geoopt
+    import torch
+    import torch.nn.functional as F
     
-    loss = torch.where(
-        label > 0,
-        d_uv,
-        F.relu(margin - d_uv)
-    )
+    manifold = geoopt.PoincareBall(c=c)
     
-    # Hierarchy penalty: Root should be closer to origin
-    norm_u = torch.norm(u, p=2, dim=-1)
-    norm_v = torch.norm(v, p=2, dim=-1)
+    # Calculate geodesic distance safely
+    u_proj = manifold.projx(u)
+    v_proj = manifold.projx(v)
+    d_uv = manifold.dist(u_proj, v_proj)
     
-    hierarchy_penalty = F.relu(norm_u - norm_v + 0.3)
-    loss = loss + 10.0 * torch.where(label > 0, hierarchy_penalty, torch.zeros_like(hierarchy_penalty))
+    # 给正样本增加一个拉力下限，不要求完全重合，只要拉近到0.5以内即可，防止过度压缩
+    margin_pos = 0.5
+    margin_neg = 6.0
     
-    return loss.mean()
+    # Push positive pairs closer (distance < margin_pos)
+    # Push negative pairs away (distance > margin_neg)
+    loss_pos = F.relu(d_uv - margin_pos)
+    loss_neg = F.relu(margin_neg - d_uv)
+    
+    mask_pos = (label > 0).float()
+    mask_neg = (label < 0).float()
+    
+    # Normalize by the number of active pairs to prevent loss scale from fluctuating
+    num_pos = max(1, mask_pos.sum().item())
+    num_neg = max(1, mask_neg.sum().item())
+    
+    # 增加正样本的权重，迫使模型学习父子连结，但不能太大否则会坍塌
+    loss = 2.0 * (loss_pos * mask_pos).sum() / num_pos + (loss_neg * mask_neg).sum() / num_neg
+    
+    return loss
 
 def train_batched_holo_embedder():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"=== 启动全息嵌入规模化微调 (Scale-Up Hyperbolic Fine-Tuning) on {device} ===")
     
     # We use english model for HotpotQA
-    embedder = HyperbolicEmbedder("C:/Users/29478.000/Desktop/系统科学金融理论/model_downloads/models/bge-small-en-v1.5").to(device)
-    optimizer = optim.Adam(embedder.projection.parameters(), lr=1e-3)
+    embedder = HyperbolicEmbedder("/gz-data/Qwen2.5-1.5B-Instruct").to(device)
+    # 减小学习率，并使用 Riemannian Adam (因为普通的 Adam 会把参数拉出李代数/流形空间)
+    import geoopt
+    optimizer = geoopt.optim.RiemannianAdam(embedder.projection.parameters(), lr=1e-4)
     
     # Use the generated HotpotQA training pairs
     dataset = HierarchicalDataset("hotpotqa_train_pairs.json")
+    # Reduce dataset size for faster training
+    import random
+    random.seed(42)
+    dataset.data = random.sample(dataset.data, 2000)
+    
     # Small batch size due to memory constraints of keeping Transformer on GPU
     dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
     
-    epochs = 30 # For a larger dataset like HotpotQA, fewer epochs are needed
+    epochs = 12 # Push it further to properly separate the classes
     
     print(f"Dataset size: {len(dataset)}, Batches per epoch: {len(dataloader)}")
     print("[开始训练...]")
@@ -99,18 +107,15 @@ def train_batched_holo_embedder():
             
             total_loss += loss.item()
             
-            if batch_idx % 500 == 0:
+            if batch_idx % 50 == 0:
                 print(f"  Batch {batch_idx}/{len(dataloader)} | Loss: {loss.item():.4f}")
             
         avg_loss = total_loss / len(dataloader)
         
         # Anneal the learning rate slightly
-        if epoch == 10:
+        if epoch == 1:
             for param_group in optimizer.param_groups:
-                param_group['lr'] = 5e-4
-        if epoch == 20:
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = 1e-4
+                param_group['lr'] = 1e-5
 
         with torch.no_grad():
             r_u = torch.norm(u[0]).item()

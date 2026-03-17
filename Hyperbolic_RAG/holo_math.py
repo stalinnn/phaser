@@ -22,9 +22,11 @@ class PoincareMath:
         如果优化器不小心把向量推到了庞加莱球外，强行把它拉回到合法的球内。
         """
         norm_x = torch.norm(x, p=2, dim=-1, keepdim=True)
+        # 防止除零
+        norm_x_safe = torch.clamp(norm_x, min=self.eps)
         # 只有超过 max_norm 的才被压缩，没超过的保持原样
         cond = norm_x > self.max_norm
-        projected = torch.where(cond, x / norm_x * self.max_norm, x)
+        projected = torch.where(cond, x / norm_x_safe * self.max_norm, x)
         return projected
 
     def mobius_add(self, x, y):

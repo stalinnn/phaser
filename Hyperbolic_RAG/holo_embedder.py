@@ -9,11 +9,13 @@ class HyperbolicEmbedder(nn.Module):
     作用：将传统的预训练欧氏空间 Embedding 模型（如 BERT / BGE）升级为双曲模型。
     原理：冻结底层 Transformer 权重，在池化层后接入可学习的全息投影层，将特征映射进庞加莱球。
     """
-    def __init__(self, model_name="C:/Users/29478.000/Desktop/系统科学金融理论/model_downloads/models/bge-small-en-v1.5", c=1.0):
+    def __init__(self, model_name="/gz-data/Qwen2.5-1.5B-Instruct", c=1.0):
         super().__init__()
         # 1. 加载骨干网络
         print(f"Loading backbone model: {model_name}")
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
         self.backbone = AutoModel.from_pretrained(model_name)
         self.hidden_size = self.backbone.config.hidden_size
         
@@ -25,11 +27,20 @@ class HyperbolicEmbedder(nn.Module):
         self.holo_math = PoincareMath(c=c)
         
         # 4. 全息投影层 (Holographic Projection Layer)
-        # 这是一个简单的线性变换，负责缩放和旋转欧氏特征，以便更好地拍进庞加莱球
-        # 这一层是我们要微调 (Fine-tune) 的唯一参数！
-        self.projection = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
-        # 初始化为较小的值，确保初始映射落在球心附近，防止一开始就撞墙 (NaN)
-        nn.init.normal_(self.projection.weight, mean=0, std=0.01)
+        # 强制降维：将 1536 维的欧氏特征压缩到 64 维双曲空间
+        self.target_dim = 64
+        self.projection = nn.Sequential(
+            nn.Linear(self.hidden_size, 512),
+            nn.GELU(),
+            nn.Linear(512, self.target_dim)
+        )
+        
+        # 初始化 - 使用极小的方差，让初始映射点全部聚集在庞加莱球心 (欧氏零点) 附近
+        for m in self.projection.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, mean=0, std=0.01)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
     def forward(self, input_ids, attention_mask):
         """
@@ -37,18 +48,28 @@ class HyperbolicEmbedder(nn.Module):
         """
         # Step 1: 提取欧氏空间的特征 (利用冻结的 Transformer)
         with torch.no_grad():
-            outputs = self.backbone(input_ids=input_ids, attention_mask=attention_mask)
-            # 使用 CLS token 的表示作为句子/段落的 Embedding
-            # Shape: [Batch_size, Hidden_size]
-            euclidean_emb = outputs.last_hidden_state[:, 0, :]
+            outputs = self.backbone(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
+            # Use mean pooling for causal LMs to get a good sentence representation
+            attention_mask_expanded = attention_mask.unsqueeze(-1).expand_as(outputs.last_hidden_state)
+            euclidean_emb = torch.sum(outputs.last_hidden_state * attention_mask_expanded, 1) / torch.clamp(attention_mask_expanded.sum(1), min=1e-9)
             
-        # Step 2: 线性缩放与对齐 (可学习部分)
-        # 这一步决定了概念的层级。宏观概念会被投射为短向量，微观概念会被投射为长向量。
+        # Step 2: 非线性降维与特征提取
+        # 给模型添加残差连接 (Residual Connection) 以保底基础语义
+        # 因为前1536维不好直接残差，我们可以让 projection 尽量保持原始距离比例
         scaled_emb = self.projection(euclidean_emb)
         
-        # Step 3: 全息降维打击 (指数映射)
-        # 将欧氏向量优雅地“拍进”庞加莱球内部
-        hyperbolic_emb = self.holo_math.exp_map0(scaled_emb)
+        # Step 3: 安全地映射进庞加莱球 (利用 geoopt 库)
+        import geoopt
+        manifold = geoopt.PoincareBall(c=1.0)
+        # 放大特征的方差，让不同层级的节点在球内分布得更开
+        # 用 0.5 缩放确保即使极端长也能安全地装进球里
+        scaled_emb = scaled_emb * 0.5
+        
+        # 限制最大范数，防止映射到无穷远
+        norm = torch.norm(scaled_emb, p=2, dim=-1, keepdim=True)
+        scaled_emb = torch.where(norm > 5.0, scaled_emb / norm * 5.0, scaled_emb)
+        
+        hyperbolic_emb = manifold.expmap0(scaled_emb)
         
         return hyperbolic_emb
 
