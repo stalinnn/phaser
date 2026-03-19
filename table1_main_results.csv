@@ -1,0 +1,5 @@
+Model,Gate Strategy,Gate Rate,PPL
+Mamba (Inertial Only),Fixed 0%,0.0%,28.62
+Random TGN,Random Uniform,31.4%,310.70
+TGN (Ours),Adaptive (Surprise),31.4%,14.57
+Transformer (Geometric),Fixed 100%,100.0%,14.05

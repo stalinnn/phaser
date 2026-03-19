@@ -89,6 +89,11 @@ class ChunkedTGNBlock(nn.Module):
         # 2. Gating
         gate_score = torch.sigmoid(self.gate_proj(h_inertial)) # [B, L, 1]
         
+        # --- HARD GATING (Inference Only) ---
+        if not self.training:
+            # 只有门控值大于 0.05，才给 1.0 (真正计算)，否则彻底归 0 (完全跳过计算)
+            gate_score = (gate_score > 0.05).float()
+            
         # 3. Geometric Path
         causal_mask = torch.triu(torch.ones(L, L, device=x.device) * float('-inf'), diagonal=1)
         attn_out, _ = self.attn(x_norm, x_norm, x_norm, attn_mask=causal_mask, need_weights=False)
@@ -107,13 +112,19 @@ class UniversalModel(nn.Module):
         self.pos_emb = nn.Embedding(config.seq_len, config.d_model)
         
         self.blocks = nn.ModuleList()
-        for _ in range(config.n_layers):
+        for i in range(config.n_layers):
             if config.model_type == 'transformer':
                 self.blocks.append(TransformerBlock(config))
             elif config.model_type == 'mamba':
                 self.blocks.append(MambaBlock(config))
             elif config.model_type == 'tgn':
                 self.blocks.append(ChunkedTGNBlock(config))
+            elif config.model_type == 'jamba':
+                # Jamba: 交替堆叠 Mamba 和 Attention
+                if i % 8 == 1:
+                    self.blocks.append(TransformerBlock(config))
+                else:
+                    self.blocks.append(MambaBlock(config))
         self.head = nn.Linear(config.d_model, config.vocab_size)
 
     def forward(self, x):
@@ -178,7 +189,12 @@ def run_mqar_experiment():
     print("\n>>> Running Figure 3a: MQAR Capability Benchmark (Clean)...")
     os.makedirs('result/fig3', exist_ok=True)
     
-    configs = [ModelConfig('tgn'), ModelConfig('transformer'), ModelConfig('mamba')]
+    configs = [
+        ModelConfig('tgn'), 
+        # ModelConfig('transformer'), 
+        # ModelConfig('mamba'), 
+        # ModelConfig('jamba')
+        ]
     
     with open('result/fig3/mqar_training_curves.csv', 'w') as f:
         writer = csv.writer(f)
@@ -201,7 +217,11 @@ def run_mqar_experiment():
                 X, Y = X.to(conf.device), Y.to(conf.device)
                 
                 logits, avg_gate = model(X)
-                loss = F.cross_entropy(logits[:, -2, :], Y[:, -1])
+                task_loss = F.cross_entropy(logits[:, -2, :], Y[:, -1])
+                
+                # Add thermodynamic sparsity penalty
+                sparsity_lambda = 0.1 if conf.model_type == 'tgn' else 0.0
+                loss = task_loss + sparsity_lambda * avg_gate
                 
                 loss.backward()
                 optim.step()
@@ -212,10 +232,27 @@ def run_mqar_experiment():
                         pred = logits[:, -2, :].argmax(dim=-1)
                         acc = (pred == Y[:, -1]).float().mean().item()
                         gate_val = avg_gate.item() if isinstance(avg_gate, torch.Tensor) else 0
-                        writer.writerow([conf.model_type, step, loss.item(), acc, gate_val])
-                        pbar.set_postfix({"L": f"{loss.item():.3f}", "A": f"{acc:.1%}", "G": f"{gate_val:.1%}"})
+                        writer.writerow([conf.model_type, step, task_loss.item(), acc, gate_val])
+                        pbar.set_postfix({"L": f"{task_loss.item():.3f}", "A": f"{acc:.1%}", "G": f"{gate_val:.1%}"})
             
-            print(f"--> {conf.model_type} Final Accuracy: {acc:.2%}")
+            print(f"--> {conf.model_type} Final Training Accuracy: {acc:.2%}")
+            
+            # --- EVALUATION: Hard Gating Test ---
+            if conf.model_type == 'tgn':
+                print(f"\n[STRESS TEST] Running TGN Hard Gating Evaluation...")
+                model.eval() # 开启 Eval 模式，激活上面的二值化硬门控
+                eval_accs = []
+                eval_gates = []
+                for _ in range(50):
+                    X, Y = generate_mqar_batch(32, 128, 100, num_pairs=4)
+                    X, Y = X.to(conf.device), Y.to(conf.device)
+                    with torch.no_grad():
+                        logits, avg_gate = model(X)
+                        pred = logits[:, -2, :].argmax(dim=-1)
+                        eval_accs.append((pred == Y[:, -1]).float().mean().item())
+                        eval_gates.append(avg_gate.item())
+                        
+                print(f"--> [HARD GATE] Test Accuracy: {np.mean(eval_accs):.2%} | Real Activation Rate: {np.mean(eval_gates):.2%}")
 
 if __name__ == '__main__':
     run_mqar_experiment()
