@@ -46,6 +46,7 @@ def process_run(run_dir: str):
     lr = config.get("lr", 0.01)
     batch_size = config.get("batch_size", 1)
     d_param = config.get("d_param", 1)
+    d_hyp = config.get("hyp_dim", 16)
     
     data_cov_norm = calculate_data_covariance_norm(ckpt_path)
     
@@ -72,8 +73,7 @@ def process_run(run_dir: str):
     lambda_t = (data_cov_norm * batch_size) / (lr * safe_loss_diff2 * d_param)
     log_lambda = np.log10(lambda_t)
     
-    # Normalize effective rank (Phi / max(Phi)) for fair comparison across possibly different scales
-    norm_eff_rank = eff_ranks / np.max(eff_ranks)
+    norm_eff_rank = eff_ranks / d_hyp
     
     return {
         "arch": config.get("arch", "unknown"),

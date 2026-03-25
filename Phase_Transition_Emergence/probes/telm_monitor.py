@@ -56,6 +56,8 @@ def effective_rank_from_matrix(z: torch.Tensor, eps: float = 1e-12) -> tuple[flo
 
 def gradient_l2_norm(parameters: list[torch.nn.Parameter] | Any) -> float:
     """所有可训练参数梯度 L2 范数平方和开根。"""
+    if parameters is None:
+        return 0.0
     total_sq = 0.0
     for p in parameters:
         if p.grad is None:

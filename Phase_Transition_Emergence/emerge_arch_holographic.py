@@ -97,14 +97,17 @@ class HolographicArchitecture(nn.Module):
         if self.arch_type == "mlp":
             for layer in self.layers:
                 h = layer(h) + h # residual connection
+            h = h.squeeze(0)
+            z_euc = self.out_proj(h) * 0.05
         elif self.arch_type == "transformer":
             h = self.layers[0](h)
+            h = h.squeeze(0)
+            z_euc = self.out_proj(h) * 0.05
         elif self.arch_type == "mamba":
             for layer in self.layers:
                 h = layer(h)
-                
-        h = h.squeeze(0) # (N, hidden_dim)
-        z_euc = self.out_proj(h) * 0.1 # Initialize small to stay near origin
+            h = h.squeeze(0)
+            z_euc = self.out_proj(h) * 0.05
         
         # 将欧氏空间输出映射到庞加莱球 (以原点为切空间)
         z_hyp = self.manifold.expmap0(z_euc)
@@ -155,7 +158,7 @@ def train_arch(
     print(f"节点数: {n}, 参数量 D_param = {d_param}")
     
     # 因为参数现在是标准的欧氏权重，我们直接使用普通的 Adam 优化器
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
 
     history: list[dict] = []
     jsonl_path = run_dir / "telm_readings.jsonl"
@@ -171,12 +174,15 @@ def train_arch(
 
         step = epoch + 1
         if step % telm_every == 0 or step == 1:
-            # 记录此时的 z_hyp 状态，注意我们要监控网络参数的梯度，而不仅是 z_hyp
+            # Note: Do not track params_with_grad for architecture collapse directly, 
+            # because we want to measure the manifold geometry collapse, which is represented by z_hyp.
+            # And tracking full parameters' gradients skews the gradient norm wildly due to architecture size.
+            # BUT for calculation of Lambda, we need the trace(H) proxy which is from the loss difference over steps.
             reading = collect_reading(
                 step=step,
                 loss=loss.item(),
-                z_hyp=z_hyp.detach(), # 仅用于计算几何特征和秩
-                params_with_grad=list(model.parameters()), # 计算整个架构的梯度范数
+                z_hyp=z_hyp.detach(), 
+                params_with_grad=None, # ignore parameter gradient tracking for TELM
             )
             rec = reading.to_json_dict()
             rec["epoch"] = epoch + 1
