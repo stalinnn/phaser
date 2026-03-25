@@ -11,6 +11,7 @@ import json
 import os
 import random
 import sys
+import math
 from pathlib import Path
 
 import numpy as np
@@ -163,42 +164,108 @@ def train_arch(
     history: list[dict] = []
     jsonl_path = run_dir / "telm_readings.jsonl"
 
-    print("开始基于网络架构的全息涌现训练...")
+    print("开始基于网络架构的退火全息涌现训练 (Langevin Dynamics)...")
+    
+    # 物理退火参数
+    T_init = 1.0     # 初始高温（注入强噪声，打破神经网络的低秩偏置）
+    T_final = 0.001  # 最终低温
+    
+    # 用于计算稳定的系统温度代理
+    ema_grad_var = 0.0
+    ema_beta = 0.9
+
     for epoch in range(epochs):
         optimizer.zero_grad()
         
-        z_hyp = model(euc_emb)
+        # 退火温度 schedule (指数衰减)
+        current_T = T_init * (T_final / T_init) ** (epoch / epochs)
+        
+        # 1. 神经网络前向传播
+        h = model.input_proj(euc_emb).unsqueeze(0)
+        if model.arch_type == "mlp":
+            for layer in model.layers:
+                h = layer(h) + h
+            h = h.squeeze(0)
+            z_euc = model.out_proj(h)
+        elif model.arch_type == "transformer":
+            h = model.layers[0](h)
+            h = h.squeeze(0)
+            z_euc = model.out_proj(h)
+        elif model.arch_type == "mamba":
+            for layer in model.layers:
+                h = layer(h)
+            h = h.squeeze(0)
+            z_euc = model.out_proj(h)
+            
+        # 2. 注入 Langevin 热噪声 (打破架构锁定，强行加热系统)
+        noise = torch.randn_like(z_euc) * math.sqrt(2 * current_T * lr)
+        z_euc_noisy = z_euc + noise
+        
+        # 3. 映射到庞加莱球
+        z_hyp = model.manifold.expmap0(z_euc_noisy)
+        z_hyp = clamp_to_ball(z_hyp)
+        
         loss = metric_alignment_loss(model.manifold, z_hyp, target, mask=mask)
         loss.backward()
+        
+        # 4. 提取当前步骤的梯度方差（作为 Trace(H) 的真实物理代理）
+        # 根据涨落耗散定理，梯度的经验方差与 Hessian 迹成正比
+        grad_vec = []
+        for p in model.parameters():
+            if p.grad is not None:
+                grad_vec.append(p.grad.view(-1))
+        if grad_vec:
+            grad_vec = torch.cat(grad_vec)
+            current_grad_var = grad_vec.var().item()
+            ema_grad_var = ema_beta * ema_grad_var + (1 - ema_beta) * current_grad_var
+            
         optimizer.step()
 
         step = epoch + 1
         if step % telm_every == 0 or step == 1:
-            # Note: Do not track params_with_grad for architecture collapse directly, 
-            # because we want to measure the manifold geometry collapse, which is represented by z_hyp.
-            # And tracking full parameters' gradients skews the gradient norm wildly due to architecture size.
-            # BUT for calculation of Lambda, we need the trace(H) proxy which is from the loss difference over steps.
             reading = collect_reading(
                 step=step,
                 loss=loss.item(),
                 z_hyp=z_hyp.detach(), 
-                params_with_grad=None, # ignore parameter gradient tracking for TELM
+                params_with_grad=None,
             )
             rec = reading.to_json_dict()
             rec["epoch"] = epoch + 1
+            # 记录此时真实的物理温度指标
+            rec["physics_T"] = current_T
+            rec["grad_variance"] = ema_grad_var
+            
             history.append(rec)
             with open(jsonl_path, "a", encoding="utf-8") as fj:
                 fj.write(json.dumps(rec, ensure_ascii=False) + "\n")
             print(
                 f"epoch {step:4d}  loss={loss.item():.6f}  "
                 f"eff_rank={reading.effective_rank:.4f}  "
-                f"grad_norm={reading.grad_norm:.6f}  "
+                f"T={current_T:.4f}  "
+                f"grad_var={ema_grad_var:.2e}  "
                 f"||x||_mean={reading.hyp_coord_norm_mean:.4f}"
             )
 
+    # 训练结束后，执行一次无噪声的前向传播记录最终状态
+    with torch.no_grad():
+        h = model.input_proj(euc_emb).unsqueeze(0)
+        if model.arch_type == "mlp":
+            for layer in model.layers:
+                h = layer(h) + h
+            h = h.squeeze(0)
+        elif model.arch_type == "transformer":
+            h = model.layers[0](h)
+            h = h.squeeze(0)
+        elif model.arch_type == "mamba":
+            for layer in model.layers:
+                h = layer(h)
+            h = h.squeeze(0)
+        z_euc_final = model.out_proj(h)
+        z_hyp_final = clamp_to_ball(model.manifold.expmap0(z_euc_final))
+
     torch.save(
         {
-            "z_hyp": z_hyp.detach().cpu(),
+            "z_hyp": z_hyp_final.detach().cpu(),
             "target_proxy": target.cpu(),
             "euc_emb": euc_emb.detach().cpu(),
             "texts": texts,

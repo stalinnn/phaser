@@ -53,6 +53,7 @@ def process_run(run_dir: str):
     steps = []
     eff_ranks = []
     losses = []
+    sys_temperatures = []
     
     with open(jsonl_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -62,15 +63,31 @@ def process_run(run_dir: str):
             eff_ranks.append(rec["effective_rank"])
             losses.append(rec["loss"])
             
+            # 优先使用真实追踪到的物理温度代理 (grad_variance)
+            # 如果没有，则退回到旧的机制 (为兼容老日志)
+            if "grad_variance" in rec and "physics_T" in rec:
+                current_t = rec["physics_T"]
+                # 梯度的经验方差正比于 Trace(H) * lr / B
+                # 这里的 T_sys 代表分母的热力学动能
+                t_sys = rec["grad_variance"] * current_t
+                sys_temperatures.append(t_sys)
+            else:
+                sys_temperatures.append(None)
+            
     eff_ranks = np.array(eff_ranks)
     losses = np.array(losses)
     
-    loss_diff2 = np.gradient(np.gradient(losses))
-    safe_loss_diff2 = np.maximum(np.abs(loss_diff2), 1e-8)
-    
-    # T_sys = (lr / batch_size) * Trace(H) * D_param
-    # D_param represent the dimensionality of the noise exploration space.
-    lambda_t = (data_cov_norm * batch_size) / (lr * safe_loss_diff2 * d_param)
+    # 动态计算 T_sys
+    if all(t is not None for t in sys_temperatures) and len(sys_temperatures) > 0:
+        safe_t_sys = np.maximum(np.array(sys_temperatures), 1e-12)
+        # lambda_t = S_ent / (T_sys * D_param)
+        lambda_t = data_cov_norm / (safe_t_sys * d_param)
+    else:
+        # 退回旧版本的近似公式
+        loss_diff2 = np.gradient(np.gradient(losses))
+        safe_loss_diff2 = np.maximum(np.abs(loss_diff2), 1e-12)
+        lambda_t = (data_cov_norm * batch_size) / (lr * safe_loss_diff2 * d_param)
+        
     log_lambda = np.log10(lambda_t)
     
     norm_eff_rank = eff_ranks / d_hyp
