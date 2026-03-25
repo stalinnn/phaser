@@ -95,13 +95,20 @@ class HolographicArchitecture(nn.Module):
         # x_euc: (N, input_dim) -> Treat N nodes as a sequence of length N
         h = self.input_proj(x_euc).unsqueeze(0) # (1, N, hidden_dim)
         
+        # Transformer lacks natural inductive bias for coordinate regression in this specific flat->curved task.
+        # It tends to collapse to a rank-1 point due to global attention overpowering local metric signals.
+        # We add a residual connection from the input to prevent catastrophic representation collapse.
         if self.arch_type == "mlp":
             for layer in self.layers:
                 h = layer(h) + h # residual connection
             h = h.squeeze(0)
             z_euc = self.out_proj(h) * 0.05
         elif self.arch_type == "transformer":
-            h = self.layers[0](h)
+            # Pass through Transformer
+            h_out = self.layers[0](h)
+            # CRITICAL FIX for Transformer: Residual connection to prevent rank-1 collapse
+            # This ensures the output retains the input's diversity (high rank) initially
+            h = h + h_out
             h = h.squeeze(0)
             z_euc = self.out_proj(h) * 0.05
         elif self.arch_type == "mamba":
@@ -188,7 +195,8 @@ def train_arch(
             h = h.squeeze(0)
             z_euc = model.out_proj(h)
         elif model.arch_type == "transformer":
-            h = model.layers[0](h)
+            h_out = model.layers[0](h)
+            h = h + h_out  # Residual!
             h = h.squeeze(0)
             z_euc = model.out_proj(h)
         elif model.arch_type == "mamba":

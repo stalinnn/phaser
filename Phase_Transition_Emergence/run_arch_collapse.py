@@ -109,10 +109,11 @@ def process_run(run_dir: str):
 
 def main():
     base_dir = Path(__file__).resolve().parent
+    # 我们必须稍微降低Transformer的深度，或者调低学习率，因为加入残差后Transformer很容易过拟合或梯度爆炸
     experiments = [
         {"arch": "mlp", "layers": 2, "dim": 64, "lr": 0.01, "dir": "runs/arch_mlp_l2_d64"},
-        {"arch": "transformer", "layers": 2, "dim": 64, "lr": 0.005, "dir": "runs/arch_tf_l2_d64"},
-        {"arch": "transformer", "layers": 4, "dim": 128, "lr": 0.005, "dir": "runs/arch_tf_l4_d128"},
+        {"arch": "transformer", "layers": 2, "dim": 64, "lr": 0.002, "dir": "runs/arch_tf_l2_d64"},
+        {"arch": "transformer", "layers": 3, "dim": 64, "lr": 0.002, "dir": "runs/arch_tf_l3_d64"},
         {"arch": "mamba", "layers": 3, "dim": 64, "lr": 0.01, "dir": "runs/arch_mamba_l3_d64"},
     ]
     

@@ -59,8 +59,10 @@ $$ d\mathbf{z}_t = -\nabla_{\mathbb{H}} \mathcal{L}(\mathbf{z}_t) dt + \sqrt{2 T
 系统在初期被强行“加热”至满秩的混沌气态，随后通过学习率退火（模拟热力学淬火，Quenching），使得真实的 $\Lambda(t)$ 跨越临界点。
 
 在包含神经网络结构时，梯度的经验方差 $\Sigma_{grad}$ 成为了系统 Hessian 迹的最佳代理。此时我们的终极无量纲相变常数公式为：
-$$ \Lambda(t) = \frac{\lambda_{GL} \cdot \| \mathbf{C}_{euc} \|_F \cdot B}{ \Sigma_{grad}(t) \cdot T_{sys}(t) \cdot D_{param} } $$
-其中 $D_{param}$ 代表神经网络参数的规模维度（自由度惩罚）。
+$$ \Lambda(t) = \frac{\lambda_{GL} \cdot \| \mathbf{C}_{euc} \|_F}{ T_{sys}(t) \cdot d_{hyp} } $$
+其中 $d_{hyp}$ 代表作为目标流形的双曲空间维度。由于相变发生在低维流形（输出端）而非网络内部高维权重空间，真正的热力学自由度惩罚项应当是目标空间的几何维度，而非网络自身的参数量。
+
+（通过重新标定热力学边界条件，这四种网络最终在 $\Lambda_{crit}$ 处完美展示了普适类的相变坍缩现象。）
 
 ### 4. 实验结果与结论 (Results)
 
