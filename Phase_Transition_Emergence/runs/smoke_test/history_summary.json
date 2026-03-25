@@ -1,0 +1,72 @@
+[
+  {
+    "step": 1,
+    "loss": 0.08523697406053543,
+    "effective_rank": 13.427099542795593,
+    "spectral_entropy": 2.5972750186920166,
+    "grad_norm": 0.1723648481865136,
+    "hyp_coord_norm_mean": 0.11821118742227554,
+    "hyp_coord_norm_max": 0.14293329417705536,
+    "epoch": 1
+  },
+  {
+    "step": 5,
+    "loss": 0.01572098396718502,
+    "effective_rank": 13.84248229243396,
+    "spectral_entropy": 2.627742290496826,
+    "grad_norm": 0.013086776964462818,
+    "hyp_coord_norm_mean": 0.2439212203025818,
+    "hyp_coord_norm_max": 0.26569482684135437,
+    "epoch": 5
+  },
+  {
+    "step": 10,
+    "loss": 0.02699369750916958,
+    "effective_rank": 13.94168017246956,
+    "spectral_entropy": 2.634882926940918,
+    "grad_norm": 0.046106690372435255,
+    "hyp_coord_norm_mean": 0.2884192168712616,
+    "hyp_coord_norm_max": 0.3172712028026581,
+    "epoch": 10
+  },
+  {
+    "step": 15,
+    "loss": 0.018722081556916237,
+    "effective_rank": 13.755401579648906,
+    "spectral_entropy": 2.621431589126587,
+    "grad_norm": 0.033303419621119136,
+    "hyp_coord_norm_mean": 0.25127145648002625,
+    "hyp_coord_norm_max": 0.30922913551330566,
+    "epoch": 15
+  },
+  {
+    "step": 20,
+    "loss": 0.011373537592589855,
+    "effective_rank": 12.94024924239247,
+    "spectral_entropy": 2.56034255027771,
+    "grad_norm": 0.01430648898835266,
+    "hyp_coord_norm_mean": 0.19863261282444,
+    "hyp_coord_norm_max": 0.273241251707077,
+    "epoch": 20
+  },
+  {
+    "step": 25,
+    "loss": 0.009551851078867912,
+    "effective_rank": 11.164493972782788,
+    "spectral_entropy": 2.412738561630249,
+    "grad_norm": 0.026838399057199428,
+    "hyp_coord_norm_mean": 0.1935930997133255,
+    "hyp_coord_norm_max": 0.25363674759864807,
+    "epoch": 25
+  },
+  {
+    "step": 30,
+    "loss": 0.003878067946061492,
+    "effective_rank": 9.362940753490815,
+    "spectral_entropy": 2.2367594242095947,
+    "grad_norm": 0.01016041770173431,
+    "hyp_coord_norm_mean": 0.2278309315443039,
+    "hyp_coord_norm_max": 0.2606530487537384,
+    "epoch": 30
+  }
+]

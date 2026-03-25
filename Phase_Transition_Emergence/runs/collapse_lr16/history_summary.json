@@ -1,0 +1,212 @@
+[
+  {
+    "step": 1,
+    "loss": 0.0877632424235344,
+    "effective_rank": 15.508752366810466,
+    "spectral_entropy": 2.7414045333862305,
+    "grad_norm": 0.07396770042159076,
+    "hyp_coord_norm_mean": 0.1571052074432373,
+    "hyp_coord_norm_max": 0.20007625222206116,
+    "epoch": 1
+  },
+  {
+    "step": 10,
+    "loss": 0.026452479884028435,
+    "effective_rank": 15.620203882621242,
+    "spectral_entropy": 2.748565196990967,
+    "grad_norm": 0.016511077105983,
+    "hyp_coord_norm_mean": 0.249254509806633,
+    "hyp_coord_norm_max": 0.3139587938785553,
+    "epoch": 10
+  },
+  {
+    "step": 20,
+    "loss": 0.012430572882294655,
+    "effective_rank": 13.943687986202033,
+    "spectral_entropy": 2.6350269317626953,
+    "grad_norm": 0.005091586347225271,
+    "hyp_coord_norm_mean": 0.23091980814933777,
+    "hyp_coord_norm_max": 0.26876699924468994,
+    "epoch": 20
+  },
+  {
+    "step": 30,
+    "loss": 0.004225667100399733,
+    "effective_rank": 8.319306606769889,
+    "spectral_entropy": 2.1185789108276367,
+    "grad_norm": 0.004359685812561718,
+    "hyp_coord_norm_mean": 0.2207692265510559,
+    "hyp_coord_norm_max": 0.2509298324584961,
+    "epoch": 30
+  },
+  {
+    "step": 40,
+    "loss": 0.001664480660110712,
+    "effective_rank": 6.28642468225874,
+    "spectral_entropy": 1.8383924961090088,
+    "grad_norm": 0.005187005763421693,
+    "hyp_coord_norm_mean": 0.24710744619369507,
+    "hyp_coord_norm_max": 0.31497377157211304,
+    "epoch": 40
+  },
+  {
+    "step": 50,
+    "loss": 0.0008788059349171817,
+    "effective_rank": 6.649432338672833,
+    "spectral_entropy": 1.894531488418579,
+    "grad_norm": 0.0034002270428108113,
+    "hyp_coord_norm_mean": 0.2201603353023529,
+    "hyp_coord_norm_max": 0.2605857253074646,
+    "epoch": 50
+  },
+  {
+    "step": 60,
+    "loss": 0.0004580482200253755,
+    "effective_rank": 6.37138817345233,
+    "spectral_entropy": 1.8518173694610596,
+    "grad_norm": 0.0016065648739038083,
+    "hyp_coord_norm_mean": 0.23171404004096985,
+    "hyp_coord_norm_max": 0.2753389775753021,
+    "epoch": 60
+  },
+  {
+    "step": 70,
+    "loss": 0.00032754972926340997,
+    "effective_rank": 6.268050813124445,
+    "spectral_entropy": 1.835465431213379,
+    "grad_norm": 0.0006740046424419827,
+    "hyp_coord_norm_mean": 0.23163031041622162,
+    "hyp_coord_norm_max": 0.27470389008522034,
+    "epoch": 70
+  },
+  {
+    "step": 80,
+    "loss": 0.00029375473968684673,
+    "effective_rank": 6.294600705055814,
+    "spectral_entropy": 1.839692234992981,
+    "grad_norm": 0.0007244548905473055,
+    "hyp_coord_norm_mean": 0.22722536325454712,
+    "hyp_coord_norm_max": 0.2679027318954468,
+    "epoch": 80
+  },
+  {
+    "step": 90,
+    "loss": 0.0002715144073590636,
+    "effective_rank": 6.31351374631333,
+    "spectral_entropy": 1.8426923751831055,
+    "grad_norm": 0.0002884549771990913,
+    "hyp_coord_norm_mean": 0.22936168313026428,
+    "hyp_coord_norm_max": 0.27124080061912537,
+    "epoch": 90
+  },
+  {
+    "step": 100,
+    "loss": 0.00026543645071797073,
+    "effective_rank": 6.351331036343899,
+    "spectral_entropy": 1.848664402961731,
+    "grad_norm": 0.00022690572336888615,
+    "hyp_coord_norm_mean": 0.22997772693634033,
+    "hyp_coord_norm_max": 0.27134111523628235,
+    "epoch": 100
+  },
+  {
+    "step": 110,
+    "loss": 0.00026226346381008625,
+    "effective_rank": 6.363507624540136,
+    "spectral_entropy": 1.8505797386169434,
+    "grad_norm": 0.00011812257156435346,
+    "hyp_coord_norm_mean": 0.22915683686733246,
+    "hyp_coord_norm_max": 0.2704801857471466,
+    "epoch": 110
+  },
+  {
+    "step": 120,
+    "loss": 0.00026090798201039433,
+    "effective_rank": 6.373154322324289,
+    "spectral_entropy": 1.8520945310592651,
+    "grad_norm": 8.710774795531401e-05,
+    "hyp_coord_norm_mean": 0.2289591282606125,
+    "hyp_coord_norm_max": 0.27039262652397156,
+    "epoch": 120
+  },
+  {
+    "step": 130,
+    "loss": 0.00025996839394792914,
+    "effective_rank": 6.3768066750672805,
+    "spectral_entropy": 1.8526674509048462,
+    "grad_norm": 3.863596396127931e-05,
+    "hyp_coord_norm_mean": 0.2292247712612152,
+    "hyp_coord_norm_max": 0.2705109417438507,
+    "epoch": 130
+  },
+  {
+    "step": 140,
+    "loss": 0.00025943436776287854,
+    "effective_rank": 6.3828384706949315,
+    "spectral_entropy": 1.8536128997802734,
+    "grad_norm": 3.850417955326396e-05,
+    "hyp_coord_norm_mean": 0.22932419180870056,
+    "hyp_coord_norm_max": 0.2707709074020386,
+    "epoch": 140
+  },
+  {
+    "step": 150,
+    "loss": 0.00025900048785842955,
+    "effective_rank": 6.386643311589899,
+    "spectral_entropy": 1.8542088270187378,
+    "grad_norm": 1.905956233882731e-05,
+    "hyp_coord_norm_mean": 0.22927634418010712,
+    "hyp_coord_norm_max": 0.2706261873245239,
+    "epoch": 150
+  },
+  {
+    "step": 160,
+    "loss": 0.00025867903605103493,
+    "effective_rank": 6.388851600192441,
+    "spectral_entropy": 1.854554533958435,
+    "grad_norm": 1.6370070078972706e-05,
+    "hyp_coord_norm_mean": 0.22922725975513458,
+    "hyp_coord_norm_max": 0.2706463932991028,
+    "epoch": 160
+  },
+  {
+    "step": 170,
+    "loss": 0.000258419691817835,
+    "effective_rank": 6.392477894731619,
+    "spectral_entropy": 1.8551219701766968,
+    "grad_norm": 1.409643449772581e-05,
+    "hyp_coord_norm_mean": 0.22921361029148102,
+    "hyp_coord_norm_max": 0.2705990672111511,
+    "epoch": 170
+  },
+  {
+    "step": 180,
+    "loss": 0.00025820350856520236,
+    "effective_rank": 6.395137977235739,
+    "spectral_entropy": 1.855538010597229,
+    "grad_norm": 1.1429347878762985e-05,
+    "hyp_coord_norm_mean": 0.22922104597091675,
+    "hyp_coord_norm_max": 0.2706177830696106,
+    "epoch": 180
+  },
+  {
+    "step": 190,
+    "loss": 0.00025801945594139397,
+    "effective_rank": 6.397267602821714,
+    "spectral_entropy": 1.8558709621429443,
+    "grad_norm": 1.0312225642781897e-05,
+    "hyp_coord_norm_mean": 0.22922925651073456,
+    "hyp_coord_norm_max": 0.270621657371521,
+    "epoch": 190
+  },
+  {
+    "step": 200,
+    "loss": 0.0002578583953436464,
+    "effective_rank": 6.399130176633528,
+    "spectral_entropy": 1.8561620712280273,
+    "grad_norm": 9.621671604764222e-06,
+    "hyp_coord_norm_mean": 0.22923216223716736,
+    "hyp_coord_norm_max": 0.27062365412712097,
+    "epoch": 200
+  }
+]
