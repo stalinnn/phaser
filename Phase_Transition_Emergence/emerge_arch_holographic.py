@@ -199,7 +199,11 @@ def train_arch(
             
         # 2. 注入 Langevin 热噪声 (打破架构锁定，强行加热系统)
         noise = torch.randn_like(z_euc) * math.sqrt(2 * current_T * lr)
-        z_euc_noisy = z_euc + noise
+        
+        # We need to map to Poincare ball, but adding noise directly in Euclidean tangent space
+        # is causing explosion to the boundary (norm ~ 0.996) and rank collapse to ~1.0.
+        # Let's scale down the output and the noise drastically.
+        z_euc_noisy = (z_euc + noise) * 0.1
         
         # 3. 映射到庞加莱球
         z_hyp = model.manifold.expmap0(z_euc_noisy)

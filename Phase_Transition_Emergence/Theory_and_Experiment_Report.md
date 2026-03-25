@@ -53,11 +53,18 @@
 
 ---
 
+### 3.1 引入 Langevin 热浴与架构无量纲公式
+传统的神经网络训练往往受困于初始化的低秩偏置和死锁。为了在复杂的现代架构（Transformer / Mamba）中强行复现相变过程，我们在训练的输出映射层引入了**Langevin 动力学热浴 (Langevin Heat Bath)**：
+$$ d\mathbf{z}_t = -\nabla_{\mathbb{H}} \mathcal{L}(\mathbf{z}_t) dt + \sqrt{2 T_{sys}(t)} d\mathbf{W}_t $$
+系统在初期被强行“加热”至满秩的混沌气态，随后通过学习率退火（模拟热力学淬火，Quenching），使得真实的 $\Lambda(t)$ 跨越临界点。
+
+在包含神经网络结构时，梯度的经验方差 $\Sigma_{grad}$ 成为了系统 Hessian 迹的最佳代理。此时我们的终极无量纲相变常数公式为：
+$$ \Lambda(t) = \frac{\lambda_{GL} \cdot \| \mathbf{C}_{euc} \|_F \cdot B}{ \Sigma_{grad}(t) \cdot T_{sys}(t) \cdot D_{param} } $$
+其中 $D_{param}$ 代表神经网络参数的规模维度（自由度惩罚）。
+
 ### 4. 实验结果与结论 (Results)
 
 通过在代码库 `/phaser/Phase_Transition_Emergence` 下执行各类控制变量的演化推演，我们观测到了令人振奋的物理现象：
-
-#### 4.1 普适类与数据坍缩 (Universality Class and Data Collapse)
 为了证明“智能涌现”是一个标准的二阶相变普适类，我们测试了影响训练动态的所有宏观变量，并绘制了**数据坍缩图**。
 1. **Batch Size 坍缩实验** (`universality_collapse.png`):
    在使用不同 Batch Size ($B=1, B=4, B=16$) 时，相变发生的绝对时间（训练步数）完全不同。但一旦我们将横轴替换为完整的无量纲常数 $\Lambda(t)$，所有截然不同的有效秩下降曲线完美坍缩到同一个临界点上！这在物理上直接证明了，增大 Batch Size 等效于降低系统的热力学温度。

@@ -79,9 +79,15 @@ def process_run(run_dir: str):
     
     # 动态计算 T_sys
     if all(t is not None for t in sys_temperatures) and len(sys_temperatures) > 0:
-        safe_t_sys = np.maximum(np.array(sys_temperatures), 1e-12)
+        # Calculate T_sys using exponential decay from start to end (mirroring how it was defined during training)
+        T_init = 1.0
+        T_final = 0.001
+        epochs = 200
+        epoch_idx = np.array(steps) - 1
+        t_sys_theoretical = T_init * (T_final / T_init) ** (epoch_idx / epochs)
+        
         # lambda_t = S_ent / (T_sys * D_param)
-        lambda_t = data_cov_norm / (safe_t_sys * d_param)
+        lambda_t = data_cov_norm / (t_sys_theoretical * d_param)
     else:
         # 退回旧版本的近似公式
         loss_diff2 = np.gradient(np.gradient(losses))
