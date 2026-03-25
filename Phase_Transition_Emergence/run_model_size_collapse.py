@@ -67,7 +67,8 @@ def process_run(run_dir: str):
     loss_diff2 = np.gradient(np.gradient(losses))
     safe_loss_diff2 = np.maximum(np.abs(loss_diff2), 1e-8)
     
-    # T_sys = (lr / batch_size) * Trace(H) * D_param
+    # T_sys = lr / batch_size * Trace(H)
+    # The noise scale also scales with dimension D_param = hyp_dim
     lambda_t = (data_cov_norm * batch_size) / (lr * safe_loss_diff2 * hyp_dim)
     log_lambda = np.log10(lambda_t)
     
@@ -84,33 +85,33 @@ def process_run(run_dir: str):
 def main():
     base_dir = Path(__file__).resolve().parent
     experiments = [
-        {"lr": 0.08, "batch_size": 1, "dir": "runs/collapse_lr08_b1"},
-        {"lr": 0.08, "batch_size": 4, "dir": "runs/collapse_lr08_b4"},
-        {"lr": 0.08, "batch_size": 16, "dir": "runs/collapse_lr08_b16"},
+        {"lr": 0.08, "hyp_dim": 8, "dir": "runs/collapse_dim8"},
+        {"lr": 0.08, "hyp_dim": 16, "dir": "runs/collapse_dim16"},
+        {"lr": 0.08, "hyp_dim": 32, "dir": "runs/collapse_dim32"},
     ]
     
     # 1. Run experiments
-    print(">>> 开始运行数据坍缩实验 (这需要一点时间) <<<")
+    print(">>> 开始运行模型参数规模(维度)坍缩实验 <<<")
     for exp in experiments:
         run_dir = base_dir / exp["dir"]
         if not (run_dir / "checkpoint.pt").exists():
-            print(f"正在运行实验 lr={exp['lr']}, batch_size={exp['batch_size']}...")
+            print(f"正在运行实验 hyp_dim={exp['hyp_dim']}...")
             cmd = [
                 "python", "emerge_holographic_bulk.py",
                 "--num_nodes", "256",
-                "--hyp_dim", "16",
+                "--hyp_dim", str(exp["hyp_dim"]),
                 "--epochs", "200",
                 "--lr", str(exp["lr"]),
-                "--batch_size", str(exp["batch_size"]),
+                "--batch_size", "1",
                 "--run_dir", str(run_dir),
                 "--synthetic_euclidean"
             ]
             subprocess.run(cmd, check=True)
         else:
-            print(f"跳过实验 lr={exp['lr']}, batch_size={exp['batch_size']}，已存在。")
+            print(f"跳过实验 hyp_dim={exp['hyp_dim']}，已存在。")
             
     # 2. Process data and plot
-    print("\n>>> 开始生成数据坍缩图 (Data Collapse) <<<")
+    print("\n>>> 开始生成参数规模坍缩图 (Model Size Collapse) <<<")
     plt.figure(figsize=(12, 5))
     
     # Plot 1: Normal Time vs Order Parameter
@@ -118,7 +119,7 @@ def main():
     for exp in experiments:
         data = process_run(base_dir / exp["dir"])
         if data:
-            plt.plot(data["steps"], data["eff_rank"], label=f"LR={exp['lr']}, B={exp['batch_size']}", linewidth=2)
+            plt.plot(data["steps"], data["eff_rank"], label=f"Dim ($D_{{param}}$) = {exp['hyp_dim']}", linewidth=2)
     plt.title("Before Collapse: Time vs Effective Rank")
     plt.xlabel("Training Steps (t)")
     plt.ylabel("Normalized Effective Rank ($\Phi$)")
@@ -130,7 +131,7 @@ def main():
     for exp in experiments:
         data = process_run(base_dir / exp["dir"])
         if data:
-            plt.plot(data["lambda"], data["eff_rank"], label=f"LR={exp['lr']}, B={exp['batch_size']}", linewidth=2, alpha=0.7)
+            plt.plot(data["lambda"], data["eff_rank"], label=f"Dim ($D_{{param}}$) = {exp['hyp_dim']}", linewidth=2, alpha=0.7)
     
     plt.title("Data Collapse: $\Lambda(t)$ vs Effective Rank")
     plt.xlabel("Control Parameter $\Lambda(t)$ (Log10)")
@@ -138,9 +139,9 @@ def main():
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    out_path = base_dir / "universality_collapse.png"
+    out_path = base_dir / "model_size_collapse.png"
     plt.savefig(out_path, dpi=150)
-    print(f"\n已生成普适性数据坍缩图: {out_path}")
+    print(f"\n已生成参数规模坍缩图: {out_path}")
 
 if __name__ == "__main__":
     main()

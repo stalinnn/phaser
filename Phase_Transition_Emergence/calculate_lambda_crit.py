@@ -54,6 +54,7 @@ def main():
     config = data["config"]
     lr = config.get("lr", 0.08)
     c = config.get("c", 1.0)
+    hyp_dim = config.get("hyp_dim", 16)
     
     # ||Data_Cov_F|| 
     data_cov_norm = calculate_data_covariance_norm(euc_emb)
@@ -101,7 +102,7 @@ def main():
     approx_hessian_trace = max(approx_hessian_trace, 1e-6)
     
     batch_size = config.get("batch_size", 1)
-    temperature = (lr / batch_size) * approx_hessian_trace
+    temperature = (lr / batch_size) * approx_hessian_trace * hyp_dim
     denominator = temperature
     
     lambda_t = numerator / denominator
@@ -116,7 +117,7 @@ def main():
     # 5. 绘制相变动力学公式曲线
     # 计算整个过程的 Lambda 演化 (Log10)
     safe_loss_diff2 = np.maximum(np.abs(loss_diff2), 1e-8)
-    temperatures = (lr / batch_size) * safe_loss_diff2
+    temperatures = (lr / batch_size) * safe_loss_diff2 * hyp_dim
     lambda_evolution = np.log10(numerator / temperatures)
     
     fig, ax1 = plt.subplots(figsize=(10, 6))
