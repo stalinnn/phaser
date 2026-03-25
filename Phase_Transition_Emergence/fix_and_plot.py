@@ -74,10 +74,7 @@ for exp in experiments:
     log_lambda = np.log10(lambda_t)
     
     # We plot log_lambda vs ranks
-    # Sort by log_lambda to avoid zig-zags in case of tiny numerical fluctuations, 
-    # though Ts should be strictly decreasing.
-    sort_idx = np.argsort(log_lambda)
-    plt.plot(log_lambda[sort_idx], ranks[sort_idx], label=f"{exp['arch']}", linewidth=2, alpha=0.7)
+    plt.plot(log_lambda, ranks, label=f"{exp['arch']}", linewidth=2, alpha=0.7)
 
 plt.title("Data Collapse: $\Lambda(t)$ vs Effective Rank")
 plt.xlabel("Control Parameter $\Lambda(t)$ (Log10)")
