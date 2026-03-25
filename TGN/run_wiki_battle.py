@@ -40,7 +40,7 @@ class Config:
             self.n_layers = 24
             self.d_model = 1024
             self.n_heads = 16
-        elif size == '1B':
+        elif size == '2B':
             self.n_layers = 24
             self.d_model = 2048
             self.n_heads = 16
@@ -49,12 +49,12 @@ class Config:
             self.d_model = 512
             self.n_heads = 8
             
-        self.batch_size = 4      
+        self.batch_size = 32      
         self.lr = 3e-4 # Lower LR for larger models
-        self.max_steps = 3000    
-        self.sparsity_lambda = 0.005 
+        self.max_steps = 100    
+        self.sparsity_lambda = 0.001
         
-        self.out_dir = f"result/wiki_battle_{size}"
+        self.out_dir = f"TGN/result/wiki_battle_{size}"
         os.makedirs(self.out_dir, exist_ok=True)
         self.log_path = os.path.join(self.out_dir, f"{model_type}_log.csv")
 
@@ -121,7 +121,14 @@ def train_model(model_type, train_loader, val_loader, size='500M'):
         n_heads=config.n_heads,
         max_seq_len=config.max_seq_len,
         model_type=config.model_type
-    ).to(config.device)
+    )
+    
+    # Enable DataParallel if multiple GPUs are available
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs!")
+        model = nn.DataParallel(model)
+        
+    model = model.to(config.device)
     
     optimizer = torch.optim.AdamW(model.parameters(), lr=config.lr, weight_decay=0.1)
     
@@ -136,12 +143,30 @@ def train_model(model_type, train_loader, val_loader, size='500M'):
     step = 0
     pbar = tqdm(total=config.max_steps, desc=f"Training {model_type}")
     
-    for X, Y in train_loader:
+    loader_iter = iter(train_loader)
+    
+    while step < config.max_steps:
+        try:
+            X, Y = next(loader_iter)
+        except StopIteration:
+            loader_iter = iter(train_loader)
+            X, Y = next(loader_iter)
+            
         X, Y = X.to(config.device), Y.to(config.device)
         optimizer.zero_grad()
         
-        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
-            logits, loss, gate = model(X, Y, mode='standard')
+        with torch.amp.autocast('cuda', dtype=torch.bfloat16):
+            # nn.DataParallel 封装后，原始参数会移动到 model.module
+            if isinstance(model, nn.DataParallel):
+                logits, loss, gate = model(X, targets=Y, mode='standard')
+            else:
+                logits, loss, gate = model(X, Y, mode='standard')
+                
+            # 当使用 DataParallel 时，loss 和 gate 返回的是各个 GPU 上结果的 list/tensor，需要求均值
+            if isinstance(model, nn.DataParallel):
+                loss = loss.mean()
+                gate = gate.mean()
+                
             if model_type == 'tgn':
                 loss += config.sparsity_lambda * gate
                 
@@ -154,7 +179,7 @@ def train_model(model_type, train_loader, val_loader, size='500M'):
         
         # gradient clipping to prevent NaN
         scaler.unscale_(optimizer)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=0.5) # 更严格的梯度裁剪
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0) # 放宽一点梯度裁剪，有助于大batch收敛
         
         scaler.step(optimizer)
         scaler.update()
@@ -171,7 +196,11 @@ def train_model(model_type, train_loader, val_loader, size='500M'):
                 writer = csv.writer(f)
                 writer.writerow([step, f"{loss_val:.4f}", f"{ppl:.2f}", f"{gate_val:.4f}"])
             
-            pbar.set_postfix({"Loss": f"{loss_val:.3f}", "PPL": f"{ppl:.1f}", "Gate": f"{gate_val:.1%}"})
+            pbar.set_postfix({
+                "Loss": f"{loss_val:.3f}", 
+                "PPL": f"{ppl:.1f}", 
+                "Gate": f"{gate_val:.2%}"
+            })
         
         step += 1
         pbar.update(1)
@@ -192,14 +221,20 @@ def train_model(model_type, train_loader, val_loader, size='500M'):
             try:
                 X, Y = next(loader_iter)
             except StopIteration:
-                loader_iter = iter(loader)
+                loader_iter = iter(val_loader)
                 X, Y = next(loader_iter)
                 
             X, Y = X.to(config.device), Y.to(config.device)
             
-            with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+            with torch.amp.autocast('cuda', dtype=torch.bfloat16):
                 # 注意这里我们依然传入 mode='standard'，它会自动触发 tgn.py 里的硬门控逻辑 (if not self.training:)
-                logits, loss, gate = model(X, Y, mode='standard')
+                if isinstance(model, nn.DataParallel):
+                    logits, loss, gate = model(X, targets=Y, mode='standard')
+                    loss = loss.mean()
+                    gate = gate.mean()
+                else:
+                    logits, loss, gate = model(X, Y, mode='standard')
+                
                 # 过滤掉 NaN 的 loss，防止 PPL 爆炸
                 if not math.isnan(loss.item()):
                     eval_losses.append(loss.item())
@@ -233,9 +268,9 @@ if __name__ == "__main__":
     tgn_model = None
     tgn_hard_gate = 0.0
     for mt in [
-        'mamba', 
-        'jamba', 
-        'tgn'
+        'tgn',
+        # 'jamba', 
+        # 'mamba'
         ]:
         final_ppl, final_gate, model = train_model(mt, train_loader, val_loader, size=size)
         results[mt] = final_ppl
@@ -259,26 +294,6 @@ if __name__ == "__main__":
     loader_iter = iter(val_loader)
     config = Config(size=size)
     
-    # 纯软门控 TGN (全量计算代价最大，不截断)
-    tgn_soft_losses = []
-    print(f"\n>>> Running Evaluation for TGN (Soft Gating)...")
-    with torch.no_grad():
-        for _ in range(eval_steps):
-            try:
-                X, Y = next(loader_iter)
-            except StopIteration:
-                loader_iter = iter(loader)
-                X, Y = next(loader_iter)
-            X, Y = X.to(config.device), Y.to(config.device)
-            
-            with torch.cuda.amp.autocast(dtype=torch.bfloat16):
-                # We mock soft gating by using mode='soft' 
-                logits, loss, _ = tgn_model(X, Y, mode='soft') # Always keep original soft values
-                if not math.isnan(loss.item()):
-                    tgn_soft_losses.append(loss.item())
-                    
-    tgn_soft_ppl = math.exp(np.mean(tgn_soft_losses)) if tgn_soft_losses else float('inf')
-    
     # Random Gating Baseline (Target same sparsity)
     print(f"\n>>> Running Evaluation for Random Gating (Sparsity: {tgn_hard_gate:.2%})...")
     random_losses = []
@@ -287,12 +302,17 @@ if __name__ == "__main__":
             try:
                 X, Y = next(loader_iter)
             except StopIteration:
-                loader_iter = iter(loader)
+                loader_iter = iter(val_loader)
                 X, Y = next(loader_iter)
             X, Y = X.to(config.device), Y.to(config.device)
             
-            with torch.cuda.amp.autocast(dtype=torch.bfloat16):
-                logits, loss, _ = tgn_model(X, Y, mode='random', target_sparsity=tgn_hard_gate)
+            with torch.amp.autocast('cuda', dtype=torch.bfloat16):
+                if isinstance(tgn_model, nn.DataParallel):
+                    logits, loss, _ = tgn_model(X, targets=Y, mode='random', target_sparsity=tgn_hard_gate)
+                    loss = loss.mean()
+                else:
+                    logits, loss, _ = tgn_model(X, Y, mode='random', target_sparsity=tgn_hard_gate)
+                    
                 if not math.isnan(loss.item()):
                     random_losses.append(loss.item())
                     
@@ -303,7 +323,22 @@ if __name__ == "__main__":
     print(f"FINAL ABLATION RESULTS ({size})")
     print("="*40)
     print(f"TGN (Hard, Sparsity={tgn_hard_gate:.2%}) | PPL: {results['tgn']:.2f}")
-    print(f"TGN (Soft, 100% active)     | PPL: {tgn_soft_ppl:.2f}")
     print(f"Random (Sparsity={tgn_hard_gate:.2%})      | PPL: {random_ppl:.2f}")
+    
+    # Save final comparison results to CSV
+    final_csv_path = os.path.join(config.out_dir, "final_results.csv")
+    with open(final_csv_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['model_type', 'ppl', 'gate_rate'])
+        for mt in results:
+            writer.writerow([mt, f"{results[mt]:.4f}", f"{gate_results[mt]:.4f}"])
+            
+    # Save ablation results to CSV
+    ablation_csv_path = os.path.join(config.out_dir, "ablation_results.csv")
+    with open(ablation_csv_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['ablation_type', 'ppl', 'gate_rate'])
+        writer.writerow(['tgn_hard', f"{results['tgn']:.4f}", f"{tgn_hard_gate:.4f}"])
+        writer.writerow(['random', f"{random_ppl:.4f}", f"{tgn_hard_gate:.4f}"])
     
     print(f"\nExperiment complete. Check '{config.out_dir}' for detailed logs.")

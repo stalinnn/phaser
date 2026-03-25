@@ -1,0 +1,170 @@
+{
+    "arguana": {
+        "Baseline": {
+            "NDCG@10": 0.62565,
+            "Recall@100": 1.0
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.49851,
+            "Recall@100": 1.0
+        },
+        "Hybrid": {
+            "NDCG@10": 0.5946,
+            "Recall@100": 1.0
+        }
+    },
+    "fiqa": {
+        "Baseline": {
+            "NDCG@10": 0.65135,
+            "Recall@100": 0.91417
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.32189,
+            "Recall@100": 0.719
+        },
+        "Hybrid": {
+            "NDCG@10": 0.52531,
+            "Recall@100": 0.8825
+        }
+    },
+    "hotpotqa": {
+        "Baseline": {
+            "NDCG@10": 0.96071,
+            "Recall@100": 1.0
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.72245,
+            "Recall@100": 0.965
+        },
+        "Hybrid": {
+            "NDCG@10": 0.94107,
+            "Recall@100": 1.0
+        }
+    },
+    "nfcorpus": {
+        "Baseline": {
+            "NDCG@10": 0.3615,
+            "Recall@100": 0.30528
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.1748,
+            "Recall@100": 0.18477
+        },
+        "Hybrid": {
+            "NDCG@10": 0.2841,
+            "Recall@100": 0.27352
+        }
+    },
+    "nq": {
+        "Baseline": {
+            "NDCG@10": 0.97869,
+            "Recall@100": 1.0
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.81924,
+            "Recall@100": 0.97667
+        },
+        "Hybrid": {
+            "NDCG@10": 0.93052,
+            "Recall@100": 1.0
+        }
+    },
+    "trec-covid": {
+        "Baseline": {
+            "NDCG@10": 0.69476,
+            "Recall@100": 0.13527
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.532,
+            "Recall@100": 0.09211
+        },
+        "Hybrid": {
+            "NDCG@10": 0.66596,
+            "Recall@100": 0.1247
+        }
+    },
+    "webis-touche2020": {
+        "Baseline": {
+            "NDCG@10": 0.66046,
+            "Recall@100": 0.95085
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.55578,
+            "Recall@100": 0.87622
+        },
+        "Hybrid": {
+            "NDCG@10": 0.612,
+            "Recall@100": 0.94229
+        }
+    },
+    "quora": {
+        "Baseline": {
+            "NDCG@10": 0.99046,
+            "Recall@100": 1.0
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.99043,
+            "Recall@100": 0.99947
+        },
+        "Hybrid": {
+            "NDCG@10": 0.99046,
+            "Recall@100": 1.0
+        }
+    },
+    "scidocs": {
+        "Baseline": {
+            "NDCG@10": 0.28244,
+            "Recall@100": 0.5685
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.1379,
+            "Recall@100": 0.3455
+        },
+        "Hybrid": {
+            "NDCG@10": 0.22206,
+            "Recall@100": 0.54
+        }
+    },
+    "fever": {
+        "Baseline": {
+            "NDCG@10": 0.99631,
+            "Recall@100": 1.0
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.76522,
+            "Recall@100": 0.975
+        },
+        "Hybrid": {
+            "NDCG@10": 0.96823,
+            "Recall@100": 1.0
+        }
+    },
+    "climate-fever": {
+        "Baseline": {
+            "NDCG@10": 0.51274,
+            "Recall@100": 0.951
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.31389,
+            "Recall@100": 0.824
+        },
+        "Hybrid": {
+            "NDCG@10": 0.4973,
+            "Recall@100": 0.95183
+        }
+    },
+    "scifact": {
+        "Baseline": {
+            "NDCG@10": 0.65797,
+            "Recall@100": 0.938
+        },
+        "Hyperbolic": {
+            "NDCG@10": 0.42669,
+            "Recall@100": 0.796
+        },
+        "Hybrid": {
+            "NDCG@10": 0.64375,
+            "Recall@100": 0.948
+        }
+    }
+}

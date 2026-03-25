@@ -33,6 +33,21 @@ class CausalSelfAttention(nn.Module):
         y = y.transpose(1, 2).contiguous().view(B, T, C)
         return self.c_proj(y)
 
+class GeometricGate(nn.Module):
+    def __init__(self, d_model):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(d_model, 64),
+            nn.Tanh(),
+            nn.Linear(64, 1),
+            nn.Sigmoid()
+        )
+        # Initialize bias to negative to encourage sparsity at start (-1.0 -> ~27% gate)
+        self.net[-2].bias.data.fill_(-1.0)
+    
+    def forward(self, x):
+        return self.net(x)
+
 class TGNBlock(nn.Module):
     """
     Thermodynamic Gated Network (TGN) Block.
@@ -58,8 +73,7 @@ class TGNBlock(nn.Module):
         self.attn = CausalSelfAttention(d_model, n_heads, max_seq_len)
         
         # Thermodynamic Gate
-        self.gate_proj = nn.Linear(d_model, 1)
-        self.gate_proj.bias.data.fill_(0.0) 
+        self.gate_proj = GeometricGate(d_model)
         
         self.ln2 = nn.LayerNorm(d_model)
         self.mlp = nn.Sequential(
@@ -83,36 +97,39 @@ class TGNBlock(nn.Module):
             
         # 2. Gating Decision
         if mode in ['standard', 'soft']:
-            gate_score = torch.sigmoid(self.gate_proj(h_inertial)) # [B, L, 1]
+            gate_score = self.gate_proj(h_inertial.detach()) # [B, L, 1]
+            if gate_score.dim() == 2:
+                gate_score = gate_score.unsqueeze(-1)
+                
+            # --- TRAINING: CONTINUOUS, INFERENCE: HARD ---
+            if mode == 'standard' and not self.training:
+                gate_score = (gate_score > hard_gate_threshold).float()
+                
+            attn_out = self.attn(x_norm)
+            out = (1 - gate_score) * h_inertial + gate_score * attn_out
             
-            # --- HARD GATING WITH STE ---
-            if mode == 'standard':
-                hard_gate = (gate_score > hard_gate_threshold).float()
-                if self.training:
-                    # Straight-Through Estimator: forward is hard, backward is soft
-                    # gate_score = hard_gate.detach() - gate_score.detach() + gate_score
-                    # We MUST use the STE trick safely to not interfere with standard Pytorch autograd.
-                    # This formulation ensures forward pass uses hard_gate, but backward pass sees gate_score gradients.
-                    gate_score = gate_score + (hard_gate - gate_score).detach()
-                else:
-                    # Thresholding for actual sparse execution
-                    gate_score = hard_gate
         elif mode == 'random' and fixed_mask is not None:
             gate_score = fixed_mask
+            attn_out = self.attn(x_norm)
+            out = (1 - gate_score) * h_inertial + gate_score * attn_out
+            
         elif mode == 'jamba':
             gate_score = torch.ones((B, L, 1), device=x.device)
-        else: # mamba
+            attn_out = self.attn(x_norm)
+            out = (1 - gate_score) * h_inertial + gate_score * attn_out
+            
+        elif mode == 'mamba':
             gate_score = torch.zeros((B, L, 1), device=x.device)
+            out = h_inertial
+            
+        else: # random default
+            gate_score = fixed_mask if fixed_mask is not None else torch.zeros((B, L, 1), device=x.device)
+            attn_out = self.attn(x_norm)
+            out = (1 - gate_score) * h_inertial + gate_score * attn_out
             
         # Protect gate from total zero
         gate_score = gate_score.clamp(min=1e-5)
         
-        # 3. Geometric Path (Anti-dissipative work)
-        attn_out = self.attn(x_norm)
-        
-        # 4. Thermodynamic Mixing
-        #out = (1 - gate_score) * h_inertial + gate_score * attn_out
-        out = h_inertial + gate_score * attn_out
         # RESIDUAL CONNECTION!
         x = x + out
         

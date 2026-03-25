@@ -1,0 +1,3 @@
+ablation_type,ppl,gate_rate
+tgn_hard,181.6384,0.1226
+random,184.6917,0.1226

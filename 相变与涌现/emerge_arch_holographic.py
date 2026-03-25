@@ -1,0 +1,320 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+架构普适性与全息相变涌现训练：
+测试不同架构（MLP, Transformer, Mamba-Proxy）和层数是否均能发生相变并坍缩到同一主曲线。
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import random
+import sys
+import math
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+_EXPERIMENT_ROOT = Path(__file__).resolve().parent
+if str(_EXPERIMENT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_EXPERIMENT_ROOT))
+
+import geoopt
+
+from core.hyperbolic_space import clamp_to_ball, make_poincare_ball
+from core.metric_alignment import (
+    cosine_similarity_matrix,
+    map_similarity_to_entanglement_proxy,
+    metric_alignment_loss,
+    upper_triangle_mask,
+)
+from probes.telm_monitor import collect_reading
+from emerge_holographic_bulk import set_seed, load_texts, encode_euclidean, build_target_proxy
+
+class MambaProxyLayer(nn.Module):
+    """
+    一个极简的 Mamba / SSM 代理层。
+    包含 1D 卷积和门控线性单元 (GLU)，模拟 Mamba 的选择性状态空间机制在序列上的局部混合和门控特性。
+    """
+    def __init__(self, d_model):
+        super().__init__()
+        self.conv1d = nn.Conv1d(d_model, d_model, kernel_size=3, padding=1)
+        self.linear_x = nn.Linear(d_model, d_model)
+        self.linear_gate = nn.Linear(d_model, d_model)
+        self.out_proj = nn.Linear(d_model, d_model)
+        self.norm = nn.LayerNorm(d_model)
+        
+    def forward(self, x):
+        # x: (B, L, D)
+        residual = x
+        x = self.norm(x)
+        # Conv1d expects (B, D, L)
+        x_conv = self.conv1d(x.transpose(1, 2)).transpose(1, 2)
+        gate = torch.sigmoid(self.linear_gate(x))
+        x_proj = self.linear_x(x_conv)
+        out = gate * x_proj
+        return self.out_proj(out) + residual
+
+class HolographicArchitecture(nn.Module):
+    def __init__(self, arch_type, input_dim, hidden_dim, hyp_dim, num_layers, c=1.0):
+        super().__init__()
+        self.arch_type = arch_type
+        self.input_proj = nn.Linear(input_dim, hidden_dim)
+        self.layers = nn.ModuleList()
+        
+        if arch_type == "mlp":
+            for _ in range(num_layers):
+                self.layers.append(nn.Sequential(
+                    nn.Linear(hidden_dim, hidden_dim),
+                    nn.GELU(),
+                    nn.LayerNorm(hidden_dim)
+                ))
+        elif arch_type == "transformer":
+            layer = nn.TransformerEncoderLayer(
+                d_model=hidden_dim, 
+                nhead=4, 
+                dim_feedforward=hidden_dim*4, 
+                batch_first=True, 
+                norm_first=True
+            )
+            self.layers.append(nn.TransformerEncoder(layer, num_layers=num_layers))
+        elif arch_type == "mamba":
+            for _ in range(num_layers):
+                self.layers.append(MambaProxyLayer(hidden_dim))
+        else:
+            raise ValueError(f"Unknown arch: {arch_type}")
+            
+        self.out_proj = nn.Linear(hidden_dim, hyp_dim)
+        self.manifold = geoopt.PoincareBall(c=c)
+        
+    def forward(self, x_euc):
+        # x_euc: (N, input_dim) -> Treat N nodes as a sequence of length N
+        h = self.input_proj(x_euc).unsqueeze(0) # (1, N, hidden_dim)
+        
+        # Transformer lacks natural inductive bias for coordinate regression in this specific flat->curved task.
+        # It tends to collapse to a rank-1 point due to global attention overpowering local metric signals.
+        # We add a residual connection from the input to prevent catastrophic representation collapse.
+        if self.arch_type == "mlp":
+            for layer in self.layers:
+                h = layer(h) + h # residual connection
+            h = h.squeeze(0)
+            z_euc = self.out_proj(h) * 0.05
+        elif self.arch_type == "transformer":
+            # Pass through Transformer
+            h_out = self.layers[0](h)
+            # CRITICAL FIX for Transformer: Residual connection to prevent rank-1 collapse
+            # This ensures the output retains the input's diversity (high rank) initially
+            h = h + h_out
+            h = h.squeeze(0)
+            z_euc = self.out_proj(h) * 0.05
+        elif self.arch_type == "mamba":
+            for layer in self.layers:
+                h = layer(h)
+            h = h.squeeze(0)
+            z_euc = self.out_proj(h) * 0.05
+        
+        # 将欧氏空间输出映射到庞加莱球 (以原点为切空间)
+        z_hyp = self.manifold.expmap0(z_euc)
+        return clamp_to_ball(z_hyp)
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+def train_arch(
+    arch: str,
+    num_layers: int,
+    hidden_dim: int,
+    num_nodes: int,
+    hyp_dim: int,
+    epochs: int,
+    lr: float,
+    batch_size: int,
+    telm_every: int,
+    data_path: str | None,
+    run_dir: Path,
+    device: torch.device,
+    c: float = 1.0,
+    seed: int = 42,
+    force_synthetic: bool = False,
+):
+    set_seed(seed)
+    run_dir.mkdir(parents=True, exist_ok=True)
+
+    texts = load_texts(data_path, num_nodes)
+    
+    euc_emb = encode_euclidean(texts, device, force_synthetic=force_synthetic)
+    target = build_target_proxy(euc_emb)
+    n = target.size(0)
+    input_dim = euc_emb.size(1)
+    mask = upper_triangle_mask(n, device=device)
+
+    model = HolographicArchitecture(
+        arch_type=arch,
+        input_dim=input_dim,
+        hidden_dim=hidden_dim,
+        hyp_dim=hyp_dim,
+        num_layers=num_layers,
+        c=c
+    ).to(device)
+    
+    d_param = count_parameters(model)
+    print(f"架构: {arch.upper()}, 层数: {num_layers}, 隐藏维数: {hidden_dim}")
+    print(f"节点数: {n}, 参数量 D_param = {d_param}")
+    
+    # 因为参数现在是标准的欧氏权重，我们直接使用普通的 Adam 优化器
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+
+    history: list[dict] = []
+    jsonl_path = run_dir / "telm_readings.jsonl"
+
+    print("开始基于网络架构的真实动力学全息涌现训练...")
+    
+    # 用于计算稳定的系统温度代理
+    ema_grad_var = 0.0
+    ema_beta = 0.9
+
+    for epoch in range(epochs):
+        optimizer.zero_grad()
+        
+        # 1. 神经网络前向传播
+        h = model.input_proj(euc_emb).unsqueeze(0)
+        if model.arch_type == "mlp":
+            for layer in model.layers:
+                h = layer(h) + h
+            h = h.squeeze(0)
+            z_euc = model.out_proj(h)
+        elif model.arch_type == "transformer":
+            h_out = model.layers[0](h)
+            h = h + h_out  # Residual!
+            h = h.squeeze(0)
+            z_euc = model.out_proj(h)
+        elif model.arch_type == "mamba":
+            for layer in model.layers:
+                h = layer(h)
+            h = h.squeeze(0)
+            z_euc = model.out_proj(h)
+            
+        # 2. 映射到庞加莱球 (不使用外部强加的热噪声)
+        z_hyp = model.manifold.expmap0(z_euc)
+        z_hyp = clamp_to_ball(z_hyp)
+        
+        loss = metric_alignment_loss(model.manifold, z_hyp, target, mask=mask)
+        loss.backward()
+        
+        # 4. 提取当前步骤的梯度方差（作为 Trace(H) 的真实物理代理）
+        # 根据涨落耗散定理，梯度的经验方差与 Hessian 迹成正比
+        grad_vec = []
+        for p in model.parameters():
+            if p.grad is not None:
+                grad_vec.append(p.grad.view(-1))
+        if grad_vec:
+            grad_vec = torch.cat(grad_vec)
+            current_grad_var = grad_vec.var().item()
+            ema_grad_var = ema_beta * ema_grad_var + (1 - ema_beta) * current_grad_var
+            
+        optimizer.step()
+
+        step = epoch + 1
+        if step % telm_every == 0 or step == 1:
+            reading = collect_reading(
+                step=step,
+                loss=loss.item(),
+                z_hyp=z_hyp.detach(), 
+                params_with_grad=None,
+            )
+            rec = reading.to_json_dict()
+            rec["epoch"] = epoch + 1
+            # 记录此时真实的物理温度代理 (梯度方差)
+            rec["grad_variance"] = ema_grad_var
+            
+            history.append(rec)
+            with open(jsonl_path, "a", encoding="utf-8") as fj:
+                fj.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            print(
+                f"epoch {step:4d}  loss={loss.item():.6f}  "
+                f"eff_rank={reading.effective_rank:.4f}  "
+                f"grad_var={ema_grad_var:.2e}  "
+                f"||x||_mean={reading.hyp_coord_norm_mean:.4f}"
+            )
+
+    # 训练结束后，执行一次无噪声的前向传播记录最终状态
+    with torch.no_grad():
+        h = model.input_proj(euc_emb).unsqueeze(0)
+        if model.arch_type == "mlp":
+            for layer in model.layers:
+                h = layer(h) + h
+            h = h.squeeze(0)
+        elif model.arch_type == "transformer":
+            h = model.layers[0](h)
+            h = h.squeeze(0)
+        elif model.arch_type == "mamba":
+            for layer in model.layers:
+                h = layer(h)
+            h = h.squeeze(0)
+        z_euc_final = model.out_proj(h)
+        z_hyp_final = clamp_to_ball(model.manifold.expmap0(z_euc_final))
+
+    torch.save(
+        {
+            "z_hyp": z_hyp_final.detach().cpu(),
+            "target_proxy": target.cpu(),
+            "euc_emb": euc_emb.detach().cpu(),
+            "texts": texts,
+            "config": {
+                "arch": arch,
+                "num_layers": num_layers,
+                "hidden_dim": hidden_dim,
+                "d_param": d_param,
+                "num_nodes": n,
+                "hyp_dim": hyp_dim,
+                "epochs": epochs,
+                "lr": lr,
+                "batch_size": batch_size,
+                "c": c,
+            },
+        },
+        run_dir / "checkpoint.pt",
+    )
+    with open(run_dir / "history_summary.json", "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+
+    print(f"完成。日志: {jsonl_path}")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--arch", type=str, default="transformer", choices=["mlp", "transformer", "mamba"])
+    parser.add_argument("--num_layers", type=int, default=2)
+    parser.add_argument("--hidden_dim", type=int, default=64)
+    parser.add_argument("--num_nodes", type=int, default=128)
+    parser.add_argument("--hyp_dim", type=int, default=16)
+    parser.add_argument("--epochs", type=int, default=400)
+    parser.add_argument("--lr", type=float, default=0.01)
+    parser.add_argument("--batch_size", type=int, default=1)
+    parser.add_argument("--telm_every", type=int, default=10)
+    parser.add_argument("--run_dir", type=str, required=True)
+    parser.add_argument("--synthetic_euclidean", action="store_true")
+    args = parser.parse_args()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    train_arch(
+        arch=args.arch,
+        num_layers=args.num_layers,
+        hidden_dim=args.hidden_dim,
+        num_nodes=args.num_nodes,
+        hyp_dim=args.hyp_dim,
+        epochs=args.epochs,
+        lr=args.lr,
+        batch_size=args.batch_size,
+        telm_every=args.telm_every,
+        data_path=None,
+        run_dir=Path(args.run_dir),
+        device=device,
+        force_synthetic=args.synthetic_euclidean,
+    )
+
+if __name__ == "__main__":
+    main()

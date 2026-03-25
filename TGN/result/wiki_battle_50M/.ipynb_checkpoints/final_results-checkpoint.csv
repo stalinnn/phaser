@@ -1,0 +1,4 @@
+model_type,ppl,gate_rate
+mamba,447.9856,0.0000
+jamba,438.8590,0.1250
+tgn,414.4284,0.0242
