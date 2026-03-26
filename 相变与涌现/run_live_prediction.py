@@ -118,6 +118,10 @@ def live_prediction_experiment(crit_lambda, cov):
         # We need a stable moving average for Live Lambda because gradient variance is noisy
         live_lambdas_window = []
         
+        # We will also use an EMA for Live Lambda to make the prediction extremely stable
+        ema_live_lambda = None
+        ema_lambda_beta = 0.8
+        
         # Actually, if Lambda < local_crit_lambda, it means the system is still too HOT (high noise, low Lambda).
         # Phase transition happens when the system COOLS DOWN and Lambda crosses ABOVE the threshold.
         # But wait, in early training, gradients are tiny (cold), so Lambda is artificially huge. 
@@ -179,7 +183,13 @@ def live_prediction_experiment(crit_lambda, cov):
             T_sys = lr * max(ema_grad_var, 1e-12)
             # Base lambda without topological adjustment
             live_base_lambda = cov / (T_sys * d_param * 16.0)
-            live_lambdas_window.append(live_base_lambda)
+            
+            if ema_live_lambda is None:
+                ema_live_lambda = live_base_lambda
+            else:
+                ema_live_lambda = ema_lambda_beta * ema_live_lambda + (1 - ema_lambda_beta) * live_base_lambda
+                
+            live_lambdas_window.append(ema_live_lambda)
             if len(live_lambdas_window) > 5:
                 live_lambdas_window.pop(0)
             
@@ -193,11 +203,16 @@ def live_prediction_experiment(crit_lambda, cov):
             
             # We trigger the alarm when the system cools down enough that Lambda RISES above the threshold.
             # We wait until epoch > 15 to skip the initial artificial "cold" state where gradients are zero.
+            # And we require that the predicted epoch has not been set yet.
             if smoothed_live_lambda > local_crit_lambda and predicted_epoch == -1 and epoch > 15:
                 # Need to also ensure we are in the "cooling" phase, i.e., lambda is rising.
+                # Adding a condition to ensure the rank isn't spuriously low
                 if len(history_lambda) > 2 and history_lambda[-1] > history_lambda[-2]:
-                    print(f"🚨 [RADAR ALERT] At Epoch {epoch}, Smoothed Live \Lambda ({smoothed_live_lambda:.2e}) crossed Threshold ({local_crit_lambda:.2e})!")
-                    predicted_epoch = epoch
+                    # AND let's ensure the logical accuracy is starting to climb, showing actual structure.
+                    # R2 > 0 implies it's better than mean prediction (random guessing).
+                    if history_accuracy[-1] > 0.05:
+                        print(f"🚨 [RADAR ALERT] At Epoch {epoch}, Smoothed Live \Lambda ({smoothed_live_lambda:.2e}) crossed Threshold ({local_crit_lambda:.2e}), and Accuracy is climbing!")
+                        predicted_epoch = epoch
                 
         # Plotting the verification for this architecture
         plt.subplot(1, 3, idx+1)
